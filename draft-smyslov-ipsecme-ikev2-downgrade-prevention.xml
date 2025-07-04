@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+
+<rfc category="std" ipr="trust200902" docName="draft-smyslov-ipsecme-ikev2-downgrade-prevention-00">
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+<?rfc toc="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="no"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+
+    <front>
+        <title abbrev="Downgrade Prevention in IKEv2">Prevention Downgrade Attacks on the Internet Key Exchange Protocol Version 2 (IKEv2)</title>
+        <author initials='V.' surname="Smyslov" fullname='Valery Smyslov'>
+            <organization>ELVIS-PLUS</organization>
+            <address>
+                <postal>
+                    <country>RU</country>
+                </postal>
+                <phone></phone>
+                <email>svan@elvis.ru</email>
+            </address>
+        </author>
+        <date/>
+
+        <abstract>
+            <t> This document describes an extension to the Internet Key Exchange protocol version 2 (IKEv2)
+            that aims to prevent some kinds of downgrade attacks on this protocol.
+            </t>
+        </abstract>
+    </front>
+
+    <middle>
+        <section title="Introduction">
+            <t> The Internet Key Exchange version 2 protocol (IKEv2) defined in <xref target="RFC7296" /> provides
+            authenticated key exchange in the IP Security (IPsec) architecture. The cryptographic design of IKEv2 is based
+            on SIGMA protocol defined in <xref target="SIGMA" />. The protocol allows peers to mutually
+            authenticate themselves and to derive session keys, that are used to protect traffic.
+            </t>
+        </section>
+
+        <section anchor="mustshouldmay" title="Terminology and Notation">
+            <t> The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", 
+            "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted 
+            as described in BCP 14 <xref target="RFC2119" /> <xref target="RFC8174" /> when, and only when, 
+            they appear in all capitals, as shown here.
+            </t>
+
+            <t> It is assumed that readers are familiar with the IKEv2 protocol <xref target="RFC7296" />.
+            </t>
+        </section>
+
+        <section anchor="ikeauth" title="Authentication in IKEv2">
+            <t> The details of how authentication is performed in IKEv2 are defined in Section 2.15 of <xref target="RFC7296" />.
+            Peers sign (or MAC) some blobs that consist of various parts of protocol data (see also <xref target="SIGMA" /> for the rationale). 
+            The definition of these blobs is provided below for convenience.
+            </t>
+
+            <figure align="center">
+                <artwork align="left"><![CDATA[
+   The initiator's signed octets can be described as:
+
+   InitiatorSignedOctets = RealMessage1 | NonceRData | MACedIDForI
+   GenIKEHDR = [ four octets 0 if using port 4500 ] | RealIKEHDR
+   RealIKEHDR =  SPIi | SPIr |  . . . | Length
+   RealMessage1 = RealIKEHDR | RestOfMessage1
+   NonceRPayload = PayloadHeader | NonceRData
+   InitiatorIDPayload = PayloadHeader | RestOfInitIDPayload
+   RestOfInitIDPayload = IDType | RESERVED | InitIDData
+   MACedIDForI = prf(SK_pi, RestOfInitIDPayload)
+
+   The responder's signed octets can be described as:
+
+   ResponderSignedOctets = RealMessage2 | NonceIData | MACedIDForR
+   GenIKEHDR = [ four octets 0 if using port 4500 ] | RealIKEHDR
+   RealIKEHDR =  SPIi | SPIr |  . . . | Length
+   RealMessage2 = RealIKEHDR | RestOfMessage2
+   NonceIPayload = PayloadHeader | NonceIData
+   ResponderIDPayload = PayloadHeader | RestOfRespIDPayload
+   RestOfRespIDPayload = IDType | RESERVED | RespIDData
+   MACedIDForR = prf(SK_pr, RestOfRespIDPayload)            ]]></artwork>
+            </figure>
+
+            <t> In particular, initiator authenticates the IKE_SA_INIT request 
+            (RealMessage1) and the responder authenticates the IKE_SA_INIT response (RealMessage2). 
+            Thus, each side authenticates only the initial message it has sent and not the initial message it has received.
+            </t>
+        </section>
+
+        <section anchor="attack" title="Downgrade Attacks Description">
+            <t> The way authentication is performed in IKEv2 allows some kind of downgrade attacks. These attacks
+            are require the set of preconditions that are not common, but still not unrealistic. In particular:
+            </t>
+
+            <ol>
+                <li><t> The attacker must be on the path with the ability to intercept communications between
+                the peers and to modify their messages.</t></li>
+                <li><t> Security policies for both initiator and responder must include both "strong" and "weak" key exchange methods  
+                (with some definition of "strong" and "weak") and the attacker must be able to break "weak" key exchange
+                methods in real time.</t></li>
+                <li><t> The attacker must either has a long-term authentication key for one of the peers or must be able
+                to break authentication algorithm used by one of the peers in real time.</t></li>
+            </ol>
+
+            <t> Having these preconditions the goal of the attacker is to eavesdrop a communication between the peers 
+            (note that impersonating of the peer, whose key is compromised, is not a goal for the attacker).
+            </t>
+
+            <t> In case the attacker knows the initiator's long-term authentication key, the attack can be mount as follows.</t>
+
+            <ol>
+                <li><t> The initiator sends the IKE_SA_INIT request message with a list of proposed algorithms that includes
+                both "weak" and "strong" key exchange methods.</t></li>
+
+                <li><t> The attacker intercepts this message and re-injects a modified message without "strong" key exchange methods.
+                Note that this may require an additional step for the attack to succeed if the initiator includes
+                a public key for a "strong" key exchange method in the request. In this case the attacker intercepts
+                this message and responses with the INVALID_KE_PAYLOAD notification indicating that the initiator
+                must include public key for a "weak" key exchange method. Then this message is intercepted
+                and re-injected without "strong" key exchange methods.</t></li>
+
+                <li><t> The responder receives this message and selects one of the "weak" key exchange methods (since the message
+                does not include any "strong" one), then it sends back a response message, which attacker lets to pass through without modifications.</t></li>
+
+                <li><t> Since the attacker has seen both public keys and can break the selected "weak" key exchange method in real time,
+                it calculates SK_* session keys that allow the attacker to read and modify the content of the encrypted
+                IKE messages.</t></li>
+
+                <li><t> The initiator receives the IKE_SA_INIT response message, accepts the responder's selected algorithms, 
+                including the "weak" key exchange method (since it is allowed by its policy), and starts the IKE_AUTH exchange. It computes the AUTH payload, 
+                thus authenticating the IKE_SA_INIT request message it has sent.</t></li>
+
+                <li><t> The attacker intercepts this message, decrypts it and modifies the AUTH payload in such a way,
+                that it allegedly authenticates the IKE_SA_INIT request message that was modified and injected by the attacker. The attacker
+                is able to do this because it knows the session keys and the initiator's long-term authentication key.</t></li>
+
+                <li><t> The responder receives this message, verifies the AUTH payload and sends back the IKE_AUTH response message,
+                which the attacker allows to pass through.</t></li>
+
+                <li><t> At this point the peers have established a secure connection using "weak" key exchange method.
+                Note, that this is allowed by their security policies, but without the attacker's intervention they
+                would have used a more secure "strong" key exchange method. The attacker essentially forced 
+                the peers to use a "weak" method that it is able to break, thus downgrading the security properties
+                of the connection so that it can read the peers' communication.</t></li>
+            </ol>
+
+            <t> A variant of this attack can also be mounted on the hybrid post-quantum key exchange defined in <xref target="RFC9370" />,
+            where the attacker able to break traditional key exchange method (e.g. by means of a quantum computer) prevents 
+            peers from executing additional quantum resistant key exchange method(s).
+            </t>
+
+            <t> Another variant of this attack can be mounted if the attacker has a long-term authentication key for the responder.
+            In this case the attacker cannot change the algorithms selected by the responder, but still may be able to 
+            force peers not to use some protocol extensions, in particular those that are initially proposed by the responder.
+            </t>
+
+            <t> Similar attacks are also described in <xref target="DOWNGRADE" />.
+            </t>
+        </section>
+
+        <section anchor="solution" title="Downgrade Attacks Prevention">
+            <t> This document defines an IKEv2 extension that aims to detect attempts to mount the downgrade attacks described in 
+            <xref target="attack" />. If both peers support this extension and are configured to use it and 
+            if at least one non-compromised authentication key is used by the peers in the protocol run then:
+            </t>
+
+            <ul>
+                <li><t> An attacker cannot fool any protocol participant that its peer does not support this extension without being detected. 
+                </t></li>
+
+                <li><t> An attacker cannot modify the IKE_SA_INIT messages without being detected. 
+                </t></li>
+            </ul>
+
+            <t> If this extension is not supported by both peers, then the protocol runs as defined in <xref target="RFC7296" />.
+            </t>
+
+            <t> The idea is that both the IKE_SA_INIT request and the IKE_SA_INIT response messages must be directly authenticated 
+            by both peers. Thus, if at least one non-compromised key is used in the IKE SA establishing, then any modification
+            of the IKE_SA_INIT messages will be detected.
+            </t>
+        </section>
+
+        <section anchor="protocol" title="Protocol Details">
+            <t> The initiator supporting this extension includes a new status type notification IKE_SA_INIT_AUTH
+            in the IKE_SA_INIT request message. The Notify Message Type for this notification 
+            is &lt;TBA1 by IANA&gt;, Protocol ID and SPI Size are both set to 0 and the notification data is empty.
+            </t>
+
+            <t> If the responder supports this extension then it also includes this notification in the response message
+            regardless of whether it was received in the request or not.
+
+            <figure align="center">
+                <artwork align="left"><![CDATA[
+Initiator                       Responder
+------------------------------------------------------------------
+HDR, SAi1, KEi, Ni,     
+     N(IKE_SA_INIT_AUTH)  --->
+                          <---  HDR, SAr1, KEr, Nr, [CERTREQ,]
+                                N(IKE_SA_INIT_AUTH)
+            ]]></artwork>
+            </figure>
+
+            If a peer sent and received the IKE_SA_INIT_AUTH notification, then it usese the modified construction of the blobs 
+            to be signed (or MAC'ed) compared to the definition from Section 2.15 of <xref target="RFC7296" />:
+            </t>
+
+            <figure align="center">
+                <artwork align="left"><![CDATA[
+InitiatorSignedOctets = RealMessage1 | RealMessage2 
+                        | NonceRData | MACedIDForI
+
+ResponderSignedOctets = RealMessage2 | RealMessage1 
+                        | NonceIData | MACedIDForR
+            ]]></artwork>
+            </figure>
+
+            <t> where RealMessage1, RealMessage2, NonceIData, NonceRData, MACedIDForI and MACedIDForR are defined in Section 2.15 of <xref target="RFC7296" />.
+            </t>
+
+        </section>
+
+        <section anchor="interaction" title="Interaction with other IKEv2 Extensions">
+            <t> The IKE_INTERMEDIATE exchange defined in <xref target="RFC9242" /> also modifies blobs to be signed (or MAC'ed).
+            This modification is described in Section 3.3.2 of <xref target="RFC9242" /> and can be 
+            summarized as an addition of new piece of data (IntAuth) to the end of the blobs from Section 2.15 of <xref target="RFC7296" />.
+            If peers support extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blobs to be signed (or MAC'ed)
+            defined in <xref target="protocol" /> as replacement for blobs defined in Section 2.15 of <xref target="RFC7296" />,
+            so that in case of IKE_INTERMEDIATE the IntAuth is added to these modified blobs.
+            </t>
+
+            <t> Note, that authentication of the IKE_INTERMEDIATE exchange includes messages sent in both directions,
+            thus the attacker cannot change its messages without being detected.
+            </t>
+        </section>
+
+        <section anchor="security" title="Security Considerations">
+            <t> The IKEv2 extension defined in this document aims to protect against downgrade attacks on IKEv2.
+            </t>
+        </section>
+
+        <section anchor="iana" title="IANA Considerations">
+            <t>This document defines new Notify Message Type in the "IKEv2 Notify Message Status Types" registry:</t>
+            <figure align="center">
+                <artwork align="left"><![CDATA[
+<TBA>       IKE_SA_INIT_AUTH
+                ]]></artwork>
+            </figure>
+        </section>
+
+        <section anchor="ack" title="Acknowledgements">
+            <t> The attack was originally described by Christopher Patton.
+            </t>
+        </section>
+
+    </middle>
+
+    <back>
+        <references title='Normative References'>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7296.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9242.xml" ?>
+        </references>
+
+        <references title='Informative References'>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9370.xml" ?>
+            <reference anchor="SIGMA">
+              <front>
+                <title>SIGMA: The ‘SIGn-and-MAc’ Approach to Authenticated Diffie-Hellman and Its Use in the IKE Protocols</title>
+                <author fullname="Hugo Krawczyk" initials="H." surname="Krawczyk">
+                  <organization/>
+                </author>
+                <date year="2003"/>
+              </front>
+              <seriesInfo name="Lecture Notes in Computer Science" value="pp. 400-425"/>
+              <seriesInfo name="DOI" value="10.1007/978-3-540-45146-4_24"/>
+              <seriesInfo name="ISBN" value="[&quot;9783540406747&quot;, &quot;9783540451464&quot;]"/>
+              <refcontent>Springer Berlin Heidelberg</refcontent>
+            </reference>
+            <reference anchor="DOWNGRADE" target="https://ia.cr/2016/072">
+              <front>
+                <title>Downgrade Resilience in Key-Exchange Protocols</title>
+                <author fullname="Karthikeyan Bhargavan" initials="K." surname="Bhargavan">
+                  <organization/>
+                </author>
+                <author fullname="Christina Brzuska" initials="C." surname="Brzuska">
+                  <organization/>
+                </author>
+                <author fullname="Cédric Fournet" initials="C." surname="Fournet">
+                  <organization/>
+                </author>
+                <author fullname="Markulf Kohlweiss" initials="M." surname="Kohlweiss">
+                  <organization/>
+                </author>
+                <author fullname="Santiago Zanella-Béguelin" initials="S." surname="Zanella-Béguelin">
+                  <organization/>
+                </author>
+                <author fullname="Matthew Green" initials="M." surname="Green">
+                  <organization/>
+                </author>
+                <date month="January" year="2016"/>
+              </front>
+              <seriesInfo name="Cryptology ePrint Archive" value="Paper 2016/072"/>
+            </reference>
+        </references>
+    </back>
+</rfc>
+
+
