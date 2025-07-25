@@ -24,11 +24,17 @@
                 <email>svan@elvis.ru</email>
             </address>
         </author>
+        <author initials="C." surname="Patton" fullname="Christopher Patton">
+            <organization>Cloudflare</organization>
+            <address>
+              <email>chrispatton+ietf@gmail.com</email>
+            </address>
+        </author>
         <date/>
-
         <abstract>
             <t> This document describes an extension to the Internet Key Exchange protocol version 2 (IKEv2)
-            that aims to prevent some kinds of downgrade attacks on this protocol.
+            that aims to prevent some kinds of downgrade attacks on this protocol by having the peers confirm
+            they have participated in the same conversation.
             </t>
         </abstract>
     </front>
@@ -38,8 +44,13 @@
             <t> The Internet Key Exchange version 2 protocol (IKEv2) defined in <xref target="RFC7296" /> provides
             authenticated key exchange in the IP Security (IPsec) architecture. The cryptographic design of IKEv2 is based
             on SIGMA protocol defined in <xref target="SIGMA" />. The protocol allows peers to mutually
-            authenticate themselves and to derive session keys, that are used to protect traffic.
+            authenticate themselves and to derive session keys that are used to protect traffic.
             </t>
+
+            <t>(RFC EDITOR: Please remove this paragraph.) This document is being developed at
+            <eref target="https://github.com/smyslov/ikev2-downgrade-prevention"/>.
+            </t>
+
         </section>
 
         <section anchor="mustshouldmay" title="Terminology and Notation">
@@ -84,15 +95,16 @@
    MACedIDForR = prf(SK_pr, RestOfRespIDPayload)            ]]></artwork>
             </figure>
 
-            <t> In particular, initiator authenticates the IKE_SA_INIT request 
+            <t> In particular, the initiator authenticates the IKE_SA_INIT request 
             (RealMessage1) and the responder authenticates the IKE_SA_INIT response (RealMessage2). 
             Thus, each side authenticates only the initial message it has sent and not the initial message it has received.
             </t>
         </section>
 
         <section anchor="attack" title="Downgrade Attacks Description">
-            <t> The way authentication is performed in IKEv2 allows some kind of downgrade attacks. These attacks
-            are require the set of preconditions that are not common, but still not unrealistic. In particular:
+	    <t> The way authentication is performed in IKEv2 allows at least two kinds of downgrade attacks.
+	    The first of these is a key-compromise impersonation (KCI) attack and requires
+            a set of preconditions that are not common, but still not unrealistic. In particular:
             </t>
 
             <ol>
@@ -101,12 +113,12 @@
                 <li><t> Security policies for both initiator and responder must include both "strong" and "weak" key exchange methods  
                 (with some definition of "strong" and "weak") and the attacker must be able to break "weak" key exchange
                 methods in real time.</t></li>
-                <li><t> The attacker must either has a long-term authentication key for one of the peers or must be able
+                <li><t> The attacker must either have a long-term authentication key for one of the peers or must be able
                 to break authentication algorithm used by one of the peers in real time.</t></li>
             </ol>
 
-            <t> Having these preconditions the goal of the attacker is to eavesdrop a communication between the peers 
-            (note that impersonating of the peer, whose key is compromised, is not a goal for the attacker).
+	    <t> Having these preconditions the goal of the attacker is to eavesdrop on communication between the peers.
+	    While the attack requires impersonating one of these peers to the other, impersonation is not its primary goal.
             </t>
 
             <t> In case the attacker knows the initiator's long-term authentication key, the attack can be mount as follows.</t>
@@ -118,46 +130,58 @@
                 <li><t> The attacker intercepts this message and re-injects a modified message without "strong" key exchange methods.
                 Note that this may require an additional step for the attack to succeed if the initiator includes
                 a public key for a "strong" key exchange method in the request. In this case the attacker intercepts
-                this message and responses with the INVALID_KE_PAYLOAD notification indicating that the initiator
+                this message and responds with the INVALID_KE_PAYLOAD notification indicating that the initiator
                 must include public key for a "weak" key exchange method. Then this message is intercepted
                 and re-injected without "strong" key exchange methods.</t></li>
 
                 <li><t> The responder receives this message and selects one of the "weak" key exchange methods (since the message
-                does not include any "strong" one), then it sends back a response message, which attacker lets to pass through without modifications.</t></li>
+                does not include any "strong" ones), then it sends back a response message, which the attacker allows to pass through without modifications.</t></li>
 
                 <li><t> Since the attacker has seen both public keys and can break the selected "weak" key exchange method in real time,
-                it calculates SK_* session keys that allow the attacker to read and modify the content of the encrypted
+                it calculates the SK_* session keys that allow the attacker to read and modify the content of the encrypted
                 IKE messages.</t></li>
 
                 <li><t> The initiator receives the IKE_SA_INIT response message, accepts the responder's selected algorithms, 
                 including the "weak" key exchange method (since it is allowed by its policy), and starts the IKE_AUTH exchange. It computes the AUTH payload, 
                 thus authenticating the IKE_SA_INIT request message it has sent.</t></li>
 
-                <li><t> The attacker intercepts this message, decrypts it and modifies the AUTH payload in such a way,
+                <li><t> The attacker intercepts this message, decrypts it and modifies the AUTH payload so
                 that it allegedly authenticates the IKE_SA_INIT request message that was modified and injected by the attacker. The attacker
                 is able to do this because it knows the session keys and the initiator's long-term authentication key.</t></li>
 
                 <li><t> The responder receives this message, verifies the AUTH payload and sends back the IKE_AUTH response message,
                 which the attacker allows to pass through.</t></li>
 
-                <li><t> At this point the peers have established a secure connection using "weak" key exchange method.
+                <li><t> At this point the peers have established a connection using the "weak" key exchange method.
                 Note, that this is allowed by their security policies, but without the attacker's intervention they
                 would have used a more secure "strong" key exchange method. The attacker essentially forced 
                 the peers to use a "weak" method that it is able to break, thus downgrading the security properties
                 of the connection so that it can read the peers' communication.</t></li>
             </ol>
 
-            <t> A variant of this attack can also be mounted on the hybrid post-quantum key exchange defined in <xref target="RFC9370" />,
-            where the attacker able to break traditional key exchange method (e.g. by means of a quantum computer) prevents 
-            peers from executing additional quantum resistant key exchange method(s).
-            </t>
-
-            <t> Another variant of this attack can be mounted if the attacker has a long-term authentication key for the responder.
+            <t> A variant of this attack can be mounted if the attacker has a long-term authentication key for the responder.
             In this case the attacker cannot change the algorithms selected by the responder, but still may be able to 
             force peers not to use some protocol extensions, in particular those that are initially proposed by the responder.
             </t>
 
-            <t> Similar attacks are also described in <xref target="DOWNGRADE" />.
+            <t> The second type of attack is an identity misbinding attack described in <xref target="DOWNGRADE" />. The
+            attacker's goal is once again to eavesdrop on the communication between two peers, but unlike the KCI attack, it does
+            not need to compromise one of the peers. Instead, the attacker only needs to know the long-term authentication key of
+            some party one of the peers is configured to communicate with.
+            </t>
+
+            <t> In particular, suppose the attacker wants to eavesdrop on communication between initiator I and responder R and
+            has access to the long-term authentication key of initiator A. The attack works exactly the same way as the previous
+            one, with one exception: after decrypting and modifying I's AUTH payload, it authenticates the modified AUTH payload
+            with A's long-term authentication key instead of I's. At the end of the attack, initiator I will believe it has
+            established a connection with responder R, but responder R will believe it has established a connection with initiator
+	    A (whose authentication key is known to the attacker). Nevertheless, the attacker will be able to read the encrypted
+	    messages sent between I and R.
+            </t>
+
+            <t> Both the KCI and identity misbinding attacks can also be mounted on the hybrid post-quantum key exchange defined in
+            <xref target="RFC9370" />, where an attacker able to break traditional key exchange method (e.g. by means of a quantum
+            computer) prevents peers from executing additional quantum resistant key exchange method(s).
             </t>
         </section>
 
@@ -180,7 +204,9 @@
 
             <t> The idea is that both the IKE_SA_INIT request and the IKE_SA_INIT response messages must be directly authenticated 
             by both peers. Thus, if at least one non-compromised key is used in the IKE SA establishing, then any modification
-            of the IKE_SA_INIT messages will be detected.
+            of the IKE_SA_INIT messages will be detected. In essence, the peers use this extension to confirm they have had the same
+            conversation, a property enjoyed by many modern authenticated key exchange protocols that may have other benefits beyond
+            downgrade protection, like TLS 1.3 <xref target="RFC8446" />.
             </t>
         </section>
 
@@ -204,7 +230,7 @@ HDR, SAi1, KEi, Ni,
             ]]></artwork>
             </figure>
 
-            If a peer sent and received the IKE_SA_INIT_AUTH notification, then it usese the modified construction of the blobs 
+            If a peer sent and received the IKE_SA_INIT_AUTH notification, then it uses the modified construction of the blobs 
             to be signed (or MAC'ed) compared to the definition from Section 2.15 of <xref target="RFC7296" />:
             </t>
 
@@ -226,9 +252,9 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
         <section anchor="interaction" title="Interaction with other IKEv2 Extensions">
             <t> The IKE_INTERMEDIATE exchange defined in <xref target="RFC9242" /> also modifies blobs to be signed (or MAC'ed).
             This modification is described in Section 3.3.2 of <xref target="RFC9242" /> and can be 
-            summarized as an addition of new piece of data (IntAuth) to the end of the blobs from Section 2.15 of <xref target="RFC7296" />.
+            summarized as an addition of a new piece of data (IntAuth) to the end of the blobs from Section 2.15 of <xref target="RFC7296" />.
             If peers support extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blobs to be signed (or MAC'ed)
-            defined in <xref target="protocol" /> as replacement for blobs defined in Section 2.15 of <xref target="RFC7296" />,
+            defined in <xref target="protocol" /> as replacements for blobs defined in Section 2.15 of <xref target="RFC7296" />,
             so that in case of IKE_INTERMEDIATE the IntAuth is added to these modified blobs.
             </t>
 
@@ -238,7 +264,13 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
         </section>
 
         <section anchor="security" title="Security Considerations">
-            <t> The IKEv2 extension defined in this document aims to protect against downgrade attacks on IKEv2.
+	    <t> The IKEv2 extension defined in this document aims to protect against downgrade attacks on IKEv2.
+            It only provides this protection when both peers implement the extension.
+            </t>
+
+            <t> The attacks described in this document can also be mitigated by disable support for weak key
+            exchange methods. Doing so is feasible when the peer is known out-of-band to support strong key
+            exchange methods, but this information may not be available in all deployment scenarios for IKEv2.
             </t>
         </section>
 
@@ -268,6 +300,7 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
 
         <references title='Informative References'>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9370.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml" ?>
             <reference anchor="SIGMA">
               <front>
                 <title>SIGMA: The ‘SIGn-and-MAc’ Approach to Authenticated Diffie-Hellman and Its Use in the IKE Protocols</title>
