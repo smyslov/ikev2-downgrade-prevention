@@ -284,7 +284,7 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
         </section>
 
         <section anchor="ack" title="Acknowledgements">
-            <t> The attack was originally described by Christopher Patton.
+            <t> TODO
             </t>
         </section>
 
