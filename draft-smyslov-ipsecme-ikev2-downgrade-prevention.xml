@@ -54,9 +54,9 @@
         </section>
 
         <section anchor="mustshouldmay" title="Terminology and Notation">
-            <t> The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", 
-            "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted 
-            as described in BCP 14 <xref target="RFC2119" /> <xref target="RFC8174" /> when, and only when, 
+            <t> The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
+            "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted
+            as described in BCP 14 <xref target="RFC2119" /> <xref target="RFC8174" /> when, and only when,
             they appear in all capitals, as shown here.
             </t>
 
@@ -95,8 +95,8 @@
    MACedIDForR = prf(SK_pr, RestOfRespIDPayload)            ]]></artwork>
             </figure>
 
-            <t> In particular, the initiator authenticates the IKE_SA_INIT request 
-            (RealMessage1) and the responder authenticates the IKE_SA_INIT response (RealMessage2). 
+            <t> In particular, the initiator authenticates the IKE_SA_INIT request
+            (RealMessage1) and the responder authenticates the IKE_SA_INIT response (RealMessage2).
             Thus, each side authenticates only the initial message it has sent and not the initial message it has received.
             </t>
         </section>
@@ -110,7 +110,7 @@
             <ol>
                 <li><t> The attacker must be on the path with the ability to intercept communications between
                 the peers and to modify their messages.</t></li>
-                <li><t> Security policies for both initiator and responder must include both "strong" and "weak" key exchange methods  
+                <li><t> Security policies for both initiator and responder must include both "strong" and "weak" key exchange methods
                 (with some definition of "strong" and "weak") and the attacker must be able to break "weak" key exchange
                 methods in real time.</t></li>
                 <li><t> The attacker must either have a long-term authentication key for one of the peers or must be able
@@ -141,8 +141,8 @@
                 it calculates the SK_* session keys that allow the attacker to read and modify the content of the encrypted
                 IKE messages.</t></li>
 
-                <li><t> The initiator receives the IKE_SA_INIT response message, accepts the responder's selected algorithms, 
-                including the "weak" key exchange method (since it is allowed by its policy), and starts the IKE_AUTH exchange. It computes the AUTH payload, 
+                <li><t> The initiator receives the IKE_SA_INIT response message, accepts the responder's selected algorithms,
+                including the "weak" key exchange method (since it is allowed by its policy), and starts the IKE_AUTH exchange. It computes the AUTH payload,
                 thus authenticating the IKE_SA_INIT request message it has sent.</t></li>
 
                 <li><t> The attacker intercepts this message, decrypts it and modifies the AUTH payload so
@@ -154,13 +154,13 @@
 
                 <li><t> At this point the peers have established a connection using the "weak" key exchange method.
                 Note, that this is allowed by their security policies, but without the attacker's intervention they
-                would have used a more secure "strong" key exchange method. The attacker essentially forced 
+                would have used a more secure "strong" key exchange method. The attacker essentially forced
                 the peers to use a "weak" method that it is able to break, thus downgrading the security properties
                 of the connection so that it can read the peers' communication.</t></li>
             </ol>
 
             <t> A variant of this attack can be mounted if the attacker has a long-term authentication key for the responder.
-            In this case the attacker cannot change the algorithms selected by the responder, but still may be able to 
+            In this case the attacker cannot change the algorithms selected by the responder, but still may be able to
             force peers not to use some protocol extensions, in particular those that are initially proposed by the responder.
             </t>
 
@@ -186,23 +186,23 @@
         </section>
 
         <section anchor="solution" title="Downgrade Attacks Prevention">
-            <t> This document defines an IKEv2 extension that aims to detect attempts to mount the downgrade attacks described in 
-            <xref target="attack" />. If both peers support this extension and are configured to use it and 
+            <t> This document defines an IKEv2 extension that aims to detect attempts to mount the downgrade attacks described in
+            <xref target="attack" />. If both peers support this extension and are configured to use it and
             if at least one non-compromised authentication key is used by the peers in the protocol run then:
             </t>
 
             <ul>
-                <li><t> An attacker cannot fool any protocol participant that its peer does not support this extension without being detected. 
+                <li><t> An attacker cannot fool any protocol participant that its peer does not support this extension without being detected.
                 </t></li>
 
-                <li><t> An attacker cannot modify the IKE_SA_INIT messages without being detected. 
+                <li><t> An attacker cannot modify the IKE_SA_INIT messages without being detected.
                 </t></li>
             </ul>
 
             <t> If this extension is not supported by both peers, then the protocol runs as defined in <xref target="RFC7296" />.
             </t>
 
-            <t> The idea is that both the IKE_SA_INIT request and the IKE_SA_INIT response messages must be directly authenticated 
+            <t> The idea is that both the IKE_SA_INIT request and the IKE_SA_INIT response messages must be directly authenticated
             by both peers. Thus, if at least one non-compromised key is used in the IKE SA establishing, then any modification
             of the IKE_SA_INIT messages will be detected. In essence, the peers use this extension to confirm they have had the same
             conversation, a property enjoyed by many modern authenticated key exchange protocols that may have other benefits beyond
@@ -212,7 +212,7 @@
 
         <section anchor="protocol" title="Protocol Details">
             <t> The initiator supporting this extension includes a new status type notification IKE_SA_INIT_AUTH
-            in the IKE_SA_INIT request message. The Notify Message Type for this notification 
+            in the IKE_SA_INIT request message. The Notify Message Type for this notification
             is &lt;TBA1 by IANA&gt;, Protocol ID and SPI Size are both set to 0 and the notification data is empty.
             </t>
 
@@ -223,23 +223,23 @@
                 <artwork align="left"><![CDATA[
 Initiator                       Responder
 ------------------------------------------------------------------
-HDR, SAi1, KEi, Ni,     
+HDR, SAi1, KEi, Ni,
      N(IKE_SA_INIT_AUTH)  --->
                           <---  HDR, SAr1, KEr, Nr, [CERTREQ,]
                                 N(IKE_SA_INIT_AUTH)
             ]]></artwork>
             </figure>
 
-            If a peer sent and received the IKE_SA_INIT_AUTH notification, then it uses the modified construction of the blobs 
+            If a peer sent and received the IKE_SA_INIT_AUTH notification, then it uses the modified construction of the blobs
             to be signed (or MAC'ed) compared to the definition from Section 2.15 of <xref target="RFC7296" />:
             </t>
 
             <figure align="center">
                 <artwork align="left"><![CDATA[
-InitiatorSignedOctets = RealMessage1 | RealMessage2 
+InitiatorSignedOctets = RealMessage1 | RealMessage2
                         | NonceRData | MACedIDForI
 
-ResponderSignedOctets = RealMessage2 | RealMessage1 
+ResponderSignedOctets = RealMessage2 | RealMessage1
                         | NonceIData | MACedIDForR
             ]]></artwork>
             </figure>
@@ -251,7 +251,7 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
 
         <section anchor="interaction" title="Interaction with other IKEv2 Extensions">
             <t> The IKE_INTERMEDIATE exchange defined in <xref target="RFC9242" /> also modifies blobs to be signed (or MAC'ed).
-            This modification is described in Section 3.3.2 of <xref target="RFC9242" /> and can be 
+            This modification is described in Section 3.3.2 of <xref target="RFC9242" /> and can be
             summarized as an addition of a new piece of data (IntAuth) to the end of the blobs from Section 2.15 of <xref target="RFC7296" />.
             If peers support extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blobs to be signed (or MAC'ed)
             defined in <xref target="protocol" /> as replacements for blobs defined in Section 2.15 of <xref target="RFC7296" />,
@@ -342,5 +342,3 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
         </references>
     </back>
 </rfc>
-
-
