@@ -268,9 +268,19 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
             It only provides this protection when both peers implement the extension.
             </t>
 
-            <t> The attacks described in this document can also be mitigated by disable support for weak key
+            <t> The attacks described in this document can also be mitigated by disabling support for weak key
             exchange methods. Doing so is feasible when the peer is known out-of-band to support strong key
             exchange methods, but this information may not be available in all deployment scenarios for IKEv2.
+            </t>
+
+            <t> The attacks can also be mitigated by mixing a pre-shared key into the session key calculation.
+            An attacker that does not know this pre-shared key will be unable to decrypt even if it manages to
+            downgrade the key exchange.
+            However, the use of a pre-shared key is negotiated by an extension <xref target="RFC8784" />,
+            <xref target="I-D.ietf-ipsecme-ikev2-qr-alt" />, and this negotiation is itself subject to downgrade
+            attack.
+            It is therefore necessary for each of the peers to mandate the use of a pre-shared key (and abort the
+            connection if negotiation fails).
             </t>
         </section>
 
@@ -301,6 +311,8 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
         <references title='Informative References'>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9370.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.I-D.ietf-ipsecme-ikev2-qr-alt.xml" ?>
             <reference anchor="SIGMA">
               <front>
                 <title>SIGMA: The ‘SIGn-and-MAc’ Approach to Authenticated Diffie-Hellman and Its Use in the IKE Protocols</title>
@@ -342,3 +354,4 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
         </references>
     </back>
 </rfc>
+
