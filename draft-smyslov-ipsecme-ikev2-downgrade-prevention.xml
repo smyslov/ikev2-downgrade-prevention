@@ -245,7 +245,9 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             </figure>
 
             <t> where RealMessage1, RealMessage2, NonceIData, NonceRData, MACedIDForI and MACedIDForR are defined in Section 2.15 of <xref target="RFC7296" />,
-				and ZeroPrefix is 8 octets of zero.
+				and ZeroPrefix is 8 octets of zero. ZeroPrefix serves a role of a domain separator making the new authentication blobs 
+				always different from authentication blobs defined in <xref target="RFC7296" />, because in both RealMessage1 and RealMessage2 the first 8 octets 
+				constitute IKE Initiator's SPI that can never be zero.
             </t>
 
         </section>
@@ -343,4 +345,5 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </references>
     </back>
 </rfc>
+
 
