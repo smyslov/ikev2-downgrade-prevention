@@ -236,15 +236,18 @@ HDR, SAi1, KEi, Ni,
 
             <figure align="center">
                 <artwork align="left"><![CDATA[
-InitiatorSignedOctets = RealMessage1 | RealMessage2
-                        | NonceRData | MACedIDForI
+InitiatorSignedOctets = ZeroPrefix | RealMessage2 
+                        | RealMessage1 | NonceRData | MACedIDForI
 
-ResponderSignedOctets = RealMessage2 | RealMessage1
-                        | NonceIData | MACedIDForR
+ResponderSignedOctets = ZeroPrefix | RealMessage1 
+					    RealMessage2 | NonceIData | MACedIDForR
             ]]></artwork>
             </figure>
 
-            <t> where RealMessage1, RealMessage2, NonceIData, NonceRData, MACedIDForI and MACedIDForR are defined in Section 2.15 of <xref target="RFC7296" />.
+            <t> where RealMessage1, RealMessage2, NonceIData, NonceRData, MACedIDForI and MACedIDForR are defined in Section 2.15 of <xref target="RFC7296" />,
+				and ZeroPrefix is 8 octets of zero. ZeroPrefix serves a role of a domain separator making the new authentication blobs 
+				always different from authentication blobs defined in <xref target="RFC7296" />, because in both RealMessage1 and RealMessage2 the first 8 octets 
+				constitute IKE Initiator's SPI that can never be zero.
             </t>
 
         </section>
@@ -354,4 +357,3 @@ ResponderSignedOctets = RealMessage2 | RealMessage1
         </references>
     </back>
 </rfc>
-
