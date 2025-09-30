@@ -275,15 +275,15 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
                 "re-negotiated at the time of resumption".
                 </t>
 
-                <t>The information of whether a peer used the new authentication logic for old SA <bcp14>MUST</bcp14> be stored
-                in the ticket and a peer <bcp14>MUST</bcp14> act the same way when doing resumption.
+                <t>The information of whether an implementation used the new authentication logic for old SA <bcp14>MUST</bcp14> be stored
+                in the ticket and the implementation <bcp14>MUST</bcp14> act the same way when doing resumption.
                 This means that in the IKE_SESSION_RESUME exchange peers do not send the IKE_SA_INIT_AUTH notification
                 and do not expect it in the received messages.
                 </t>
 
                 <t>If there is a chance that the state of this feature can be changed during SA inactivity
-                (e.g., peer is upgraded or its configuration was changed), it is <bcp14>RECOMMENDED</bcp14>
-                that the peer do not use IKE SA resumption and does a full handshake instead.
+                (e.g., a host is upgraded or its configuration was changed), it is <bcp14>RECOMMENDED</bcp14>
+                that the host do not use IKE SA resumption and does a full handshake instead.
                 </t>
             </section>
         </section>
