@@ -240,7 +240,7 @@ InitiatorSignedOctets = ZeroPrefix | RealMessage2
                         | RealMessage1 | NonceRData | MACedIDForI
 
 ResponderSignedOctets = ZeroPrefix | RealMessage1 
-					    RealMessage2 | NonceIData | MACedIDForR
+					    | RealMessage2 | NonceIData | MACedIDForR
             ]]></artwork>
             </figure>
 
@@ -357,4 +357,5 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </references>
     </back>
 </rfc>
+
 
