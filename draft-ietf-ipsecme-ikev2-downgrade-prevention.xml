@@ -13,7 +13,7 @@
 <?rfc strict="yes" ?>
 
     <front>
-        <title abbrev="Downgrade Prevention in IKEv2">Prevention Downgrade Attacks on the Internet Key Exchange Protocol Version 2 (IKEv2)</title>
+        <title abbrev="Downgrade Prevention for IKEv2">Downgrade Prevention for the Internet Key Exchange Protocol Version 2 (IKEv2)</title>
         <author initials='V.' surname="Smyslov" fullname='Valery Smyslov'>
             <organization>ELVIS-PLUS</organization>
             <address>
