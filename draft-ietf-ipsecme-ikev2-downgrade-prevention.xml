@@ -211,7 +211,7 @@
         </section>
 
         <section anchor="protocol" title="Protocol Details">
-            <t> The initiator supporting this extension includes a new status type notification IKE_SA_INIT_AUTH
+            <t> The initiator supporting this extension includes a new status type notification IKE_SA_INIT_FULL_TRANSCRIPT_AUTH
             in the IKE_SA_INIT request message. The Notify Message Type for this notification
             is &lt;TBA1 by IANA&gt;, Protocol ID and SPI Size are both set to 0 and the notification data is empty.
             </t>
@@ -224,13 +224,13 @@
 Initiator                       Responder
 ------------------------------------------------------------------
 HDR, SAi1, KEi, Ni,
-     N(IKE_SA_INIT_AUTH)  --->
-                          <---  HDR, SAr1, KEr, Nr, [CERTREQ,]
-                                N(IKE_SA_INIT_AUTH)
+     N(IKE_SA_INIT_FULL_TRANSCRIPT_AUTH)  --->
+                         <---  HDR, SAr1, KEr, Nr, [CERTREQ,]
+                               N(IKE_SA_INIT_FULL_TRANSCRIPT_AUTH)
             ]]></artwork>
             </figure>
 
-            If a peer sent and received the IKE_SA_INIT_AUTH notification, then it uses the modified construction of the blobs
+            If a peer sent and received the IKE_SA_INIT_FULL_TRANSCRIPT_AUTH notification, then it uses the modified construction of the blobs
             to be signed (or MAC'ed) compared to the definition from Section 2.15 of <xref target="RFC7296" />:
             </t>
 
@@ -291,7 +291,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             <t>This document defines new Notify Message Type in the "IKEv2 Notify Message Status Types" registry:</t>
             <figure align="center">
                 <artwork align="left"><![CDATA[
-<TBA>       IKE_SA_INIT_AUTH
+<TBA>       IKE_SA_INIT_FULL_TRANSCRIPT_AUTH
                 ]]></artwork>
             </figure>
         </section>
