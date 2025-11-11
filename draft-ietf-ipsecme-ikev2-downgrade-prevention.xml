@@ -224,8 +224,8 @@
 Initiator                       Responder
 ------------------------------------------------------------------
 HDR, SAi1, KEi, Ni,
-     N(IKE_SA_INIT_FULL_TRANSCRIPT_AUTH)  --->
-                         <---  HDR, SAr1, KEr, Nr, [CERTREQ,]
+N(IKE_SA_INIT_FULL_TRANSCRIPT_AUTH)  --->
+                              <---  HDR, SAr1, KEr, Nr, [CERTREQ,]
                                N(IKE_SA_INIT_FULL_TRANSCRIPT_AUTH)
             ]]></artwork>
             </figure>
@@ -357,6 +357,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </references>
     </back>
 </rfc>
+
 
 
 
