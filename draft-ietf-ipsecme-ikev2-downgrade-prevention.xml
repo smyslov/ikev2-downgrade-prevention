@@ -2,7 +2,7 @@
 
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd">
 
-<rfc category="std" ipr="trust200902" docName="draft-ietf-ipsecme-ikev2-downgrade-prevention-00">
+<rfc category="std" ipr="trust200902" docName="draft-ietf-ipsecme-ikev2-downgrade-prevention-01">
 
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -302,7 +302,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             An attacker that does not know this pre-shared key will be unable to decrypt even if it manages to
             downgrade the key exchange.
             However, the use of a pre-shared key is negotiated by an extension <xref target="RFC8784" />,
-            <xref target="I-D.ietf-ipsecme-ikev2-qr-alt" />, and this negotiation is itself subject to downgrade
+            <xref target="RFC9867" />, and this negotiation is itself subject to downgrade
             attack.
             It is therefore necessary for each of the peers to mandate the use of a pre-shared key (and abort the
             connection if negotiation fails).
@@ -338,7 +338,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9370.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml" ?>
-            <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-ipsecme-ikev2-qr-alt.xml"?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9867.xml" ?>
             <reference anchor="SIGMA">
               <front>
                 <title>SIGMA: The ‘SIGn-and-MAc’ Approach to Authenticated Diffie-Hellman and Its Use in the IKE Protocols</title>
