@@ -33,7 +33,7 @@
         <date/>
         <abstract>
             <t> This document describes an extension to the Internet Key Exchange protocol version 2 (IKEv2)
-            that aims to prevent some kinds of downgrade attacks on this protocol by having the peers confirm
+            that prevents particular downgrade attacks on this protocol by having the peers confirm
             they have participated in the same conversation.
             </t>
         </abstract>
@@ -43,7 +43,7 @@
         <section title="Introduction">
             <t> The Internet Key Exchange version 2 protocol (IKEv2) defined in <xref target="RFC7296" /> provides
             authenticated key exchange in the IP Security (IPsec) architecture. The cryptographic design of IKEv2 is based
-            on SIGMA protocol defined in <xref target="SIGMA" />. The protocol allows peers to mutually
+            on the SIGn-and-MAc (SIGMA) protocol defined in <xref target="SIGMA" />. The protocol allows peers to mutually
             authenticate themselves and to derive session keys that are used to protect traffic.
             </t>
 
@@ -66,8 +66,8 @@
 
         <section anchor="ikeauth" title="Authentication in IKEv2">
             <t> The details of how authentication is performed in IKEv2 are defined in Section 2.15 of <xref target="RFC7296" />.
-            Peers sign (or MAC) some blobs that consist of various parts of protocol data (see also <xref target="SIGMA" /> for the rationale). 
-            The definition of these blobs is provided below for convenience.
+            Peers sign (or MAC) some blocks of data that consist of various parts of protocol data (see also <xref target="SIGMA" /> for the rationale). 
+            The definition of these blocks of data is provided below for convenience.
             </t>
 
             <figure align="center">
@@ -95,8 +95,8 @@
    MACedIDForR = prf(SK_pr, RestOfRespIDPayload)            ]]></artwork>
             </figure>
 
-            <t> In particular, the initiator authenticates the IKE_SA_INIT request
-            (RealMessage1) and the responder authenticates the IKE_SA_INIT response (RealMessage2).
+            <t> In particular, the initiator, but not the responder, authenticates the IKE_SA_INIT request
+            (RealMessage1) and the responder, but not the initiator, authenticates the IKE_SA_INIT response (RealMessage2).
             Thus, each side authenticates only the initial message it has sent and not the initial message it has received.
             </t>
         </section>
@@ -111,7 +111,7 @@
                 <li><t> The attacker must be on the path with the ability to intercept communications between
                 the peers and to modify their messages.</t></li>
                 <li><t> Security policies for both initiator and responder must include both "strong" and "weak" key exchange methods
-                (with some definition of "strong" and "weak") and the attacker must be able to break "weak" key exchange
+                <!-- (with some definition of "strong" and "weak") --> and the attacker must be able to break "weak" key exchange
                 methods in real time.</t></li>
                 <li><t> The attacker must either have a long-term authentication key for one of the peers or must be able
                 to break authentication algorithm used by one of the peers in real time.</t></li>
@@ -186,8 +186,8 @@
         </section>
 
         <section anchor="solution" title="Downgrade Attacks Prevention">
-            <t> This document defines an IKEv2 extension that aims to detect attempts to mount the downgrade attacks described in
-            <xref target="attack" />. If both peers support this extension and are configured to use it and
+            <t> This document defines an IKEv2 extension that detects attempts to mount the downgrade attacks described in
+            <xref target="attack" />. If both peers support this extension and
             if at least one non-compromised authentication key is used by the peers in the protocol run then:
             </t>
 
@@ -230,7 +230,7 @@ N(IKE_SA_INIT_FULL_TRANSCRIPT_AUTH)  --->
             ]]></artwork>
             </figure>
 
-            If a peer sent and received the IKE_SA_INIT_FULL_TRANSCRIPT_AUTH notification, then it uses the modified construction of the blobs
+            If a peer sent and received the IKE_SA_INIT_FULL_TRANSCRIPT_AUTH notification, then it uses the modified construction of the blocks of data
             to be signed (or MAC'ed) compared to the definition from Section 2.15 of <xref target="RFC7296" />:
             </t>
 
@@ -245,8 +245,8 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             </figure>
 
             <t> where RealMessage1, RealMessage2, NonceIData, NonceRData, MACedIDForI and MACedIDForR are defined in Section 2.15 of <xref target="RFC7296" />,
-				and ZeroPrefix is 8 octets of zero. ZeroPrefix serves a role of a domain separator making the new authentication blobs 
-				always different from authentication blobs defined in <xref target="RFC7296" />, because in both RealMessage1 and RealMessage2 the first 8 octets 
+				and ZeroPrefix is 8 octets of zero. ZeroPrefix serves a role of a domain separator making the new authentication blocks of data 
+				always different from authentication blocks of data defined in <xref target="RFC7296" />, because in both RealMessage1 and RealMessage2 the first 8 octets 
 				constitute IKE Initiator's SPI that can never be zero.
             </t>
 
@@ -254,12 +254,12 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 
         <section anchor="interaction" title="Interaction with other IKEv2 Extensions">
             <section anchor="ike_intermediate" title="Interaction with the IKE_INTERMEDIATE Exchange">
-                <t> The IKE_INTERMEDIATE exchange defined in <xref target="RFC9242" /> also modifies blobs to be signed (or MAC'ed).
+                <t> The IKE_INTERMEDIATE exchange defined in <xref target="RFC9242" /> also modifies blocks of data to be signed (or MAC'ed).
                 This modification is described in Section 3.3.2 of <xref target="RFC9242" /> and can be
-                summarized as an addition of a new piece of data (IntAuth) to the end of the blobs from Section 2.15 of <xref target="RFC7296" />.
-                If peers support extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blobs to be signed (or MAC'ed)
-                defined in <xref target="protocol" /> as replacements for blobs defined in Section 2.15 of <xref target="RFC7296" />,
-                so that in case of IKE_INTERMEDIATE the IntAuth is added to these modified blobs.
+                summarized as an addition of a new piece of data (IntAuth) to the end of the blocks of data from Section 2.15 of <xref target="RFC7296" />.
+                If peers support extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blocks of data to be signed (or MAC'ed)
+                defined in <xref target="protocol" /> as replacements for blocks of data defined in Section 2.15 of <xref target="RFC7296" />,
+                so that in case of IKE_INTERMEDIATE the IntAuth is added to these modified blocks.
                 </t>
 
                 <t> Note, that authentication of the IKE_INTERMEDIATE exchange includes messages sent in both directions,
@@ -289,7 +289,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </section>
 
         <section anchor="security" title="Security Considerations">
-	    <t> The IKEv2 extension defined in this document aims to protect against downgrade attacks on IKEv2.
+	    <t> The IKEv2 extension defined in this document protects against downgrade attacks on IKEv2 described in <xref target="attack" />.
             It only provides this protection when both peers implement the extension.
             </t>
 
