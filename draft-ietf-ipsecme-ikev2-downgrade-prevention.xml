@@ -204,7 +204,14 @@
 
             <t> The idea is that both the IKE_SA_INIT request and the IKE_SA_INIT response messages must be directly authenticated
             by both peers. Thus, if at least one non-compromised key is used in the IKE SA establishing, then any modification
-            of the IKE_SA_INIT messages will be detected. In essence, the peers use this extension to confirm they have had the same
+            of the IKE_SA_INIT messages will be detected. In particular, for the attacks described in <xref target="attack" />,
+            it is necessary that the attacker forward the responder’s signed octets. Since the attacker is presumed to be incapable of forging 
+            a signature of the responder’s long-term private key, an attempt by the attacker to remove the responder’s commitment to this extension 
+            would invalidate the signature in the AUTH payload. Consequently, while an attacker could strip support for this extension from the initiator, 
+            it could not do so from the responder.
+            </t>
+
+            <t> In essence, the peers use this extension to confirm they have had the same
             conversation, a property enjoyed by many modern authenticated key exchange protocols that may have other benefits beyond
             downgrade protection, like TLS 1.3 <xref target="RFC8446" />.
             </t>
