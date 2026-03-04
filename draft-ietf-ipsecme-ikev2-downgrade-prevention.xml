@@ -27,7 +27,10 @@
         <author initials="C." surname="Patton" fullname="Christopher Patton">
             <organization>Cloudflare</organization>
             <address>
-              <email>chrispatton+ietf@gmail.com</email>
+              <postal>
+                    <country>US</country>
+                </postal>
+                <phone></phone><email>chrispatton+ietf@gmail.com</email>
             </address>
         </author>
         <date/>
@@ -121,7 +124,7 @@
 	    While the attack requires impersonating one of these peers to the other, impersonation is not its primary goal.
             </t>
 
-            <t> In case the attacker knows the initiator's long-term authentication key, the attack can be mount as follows.</t>
+            <t> In case the attacker knows the initiator's long-term authentication key, the attack can be mounted as follows.</t>
 
             <ol>
                 <li><t> The initiator sends the IKE_SA_INIT request message with a list of proposed algorithms that includes
@@ -131,7 +134,7 @@
                 Note that this may require an additional step for the attack to succeed if the initiator includes
                 a public key for a "strong" key exchange method in the request. In this case the attacker intercepts
                 this message and responds with the INVALID_KE_PAYLOAD notification indicating that the initiator
-                must include public key for a "weak" key exchange method. Then this message is intercepted
+                must include a public key for a "weak" key exchange method. Then this message is intercepted
                 and re-injected without "strong" key exchange methods.</t></li>
 
                 <li><t> The responder receives this message and selects one of the "weak" key exchange methods (since the message
@@ -159,15 +162,15 @@
                 of the connection so that it can read the peers' communication.</t></li>
             </ol>
 
-            <t> A variant of this attack can be mounted if the attacker has the responder’s long-term authentication key.
-            In this case the attacker cannot change the algorithms selected by the responder, but still may be able to
+            <t> A variant of this attack can be mounted if the attacker has a long-term authentication key for the responder.
+            In this case the attacker cannot change the set of algorithms from which the responder makes its choice, but still may be able to
             force peers not to use some protocol extensions, in particular those that are initially proposed by the responder.
             </t>
 
             <t> The second type of attack is an identity misbinding attack described in <xref target="DOWNGRADE" />. The
             attacker's goal is once again to eavesdrop on the communication between two peers, but unlike the KCI attack, it does
             not need to compromise one of the peers. Instead, the attacker only needs to know the long-term authentication key of
-            some party one of the peers is configured to communicate with.
+            some party with whom one of the peers is configured to communicate.
             </t>
 
             <t> In particular, suppose the attacker wants to eavesdrop on communication between initiator I and responder R and
@@ -191,7 +194,7 @@
         <section anchor="solution" title="Downgrade Attacks Prevention">
             <t> This document defines an IKEv2 extension that aims to detect attempts to mount the downgrade attacks described in
             <xref target="attack" />. If both peers support this extension and are configured to use it and
-            if at least one peer’s authentication key is not compromised in the protocol run then:
+            if at least one authentication key used by the peers in the protocol run is not compromised, then:
             </t>
 
             <ul>
@@ -206,8 +209,15 @@
             </t>
 
             <t> The idea is that both the IKE_SA_INIT request and the IKE_SA_INIT response messages must be directly authenticated
-            by both peers. Thus, if at least one non-compromised key is used in the IKE SA establishment, then any modification
-            of the IKE_SA_INIT messages will be detected. In essence, the peers use this extension to confirm they have had the same
+            by both peers. Thus, if at least one non-compromised key is used in the IKE SA establishing, then any modification
+            of the IKE_SA_INIT messages will be detected. In particular, for the attacks described in <xref target="attack" />,
+            it is necessary that the attacker forward the responder’s signed octets. Since the attacker is presumed to be incapable of forging 
+            a valid signature on behalf of the responder, an attempt by the attacker to remove the responder’s commitment to this extension 
+            would invalidate the signature in the AUTH payload. Consequently, while an attacker could strip support for this extension from the initiator, 
+            it could not do so from the responder.
+            </t>
+
+            <t> In essence, the peers use this extension to confirm they have had the same
             conversation, a property enjoyed by many modern authenticated key exchange protocols that may have other benefits beyond
             downgrade protection, like TLS 1.3 <xref target="RFC8446" />.
             </t>
@@ -265,9 +275,9 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
                 so that in case of IKE_INTERMEDIATE the IntAuth is added to these modified blobs.
                 </t>
 
-                <t> Note, that authentication of the IKE_INTERMEDIATE exchange includes messages sent in both directions,
+                <aside><t> Authentication of the IKE_INTERMEDIATE exchange includes messages sent in both directions,
                 thus the attacker cannot change its messages without being detected.
-                </t>
+                </t></aside>
             </section>
 
             <section anchor="ike_resumption" title="Interaction with the IKE Session Resumption">
@@ -383,6 +393,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </references>
     </back>
 </rfc>
+
 
 
 
