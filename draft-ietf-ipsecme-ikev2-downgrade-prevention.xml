@@ -162,7 +162,7 @@
                 of the connection so that it can read the peers' communication.</t></li>
             </ol>
 
-            <t> A variant of this attack can be mounted if the attacker has a long-term authentication key for the responder.
+            <t> A variant of this attack can be mounted if the attacker has the responder’s long-term authentication key.
             In this case the attacker cannot change the set of algorithms from which the responder makes its choice, but still may be able to
             force peers not to use some protocol extensions, in particular those that are initially proposed by the responder.
             </t>
@@ -393,6 +393,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </references>
     </back>
 </rfc>
+
 
 
 
