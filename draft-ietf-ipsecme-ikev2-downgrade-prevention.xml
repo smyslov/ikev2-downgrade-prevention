@@ -290,7 +290,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 
                 <t>The information of whether an implementation used the new authentication logic for old SA <bcp14>MUST</bcp14> be stored
                 in the ticket and the implementation <bcp14>MUST</bcp14> act the same way when doing resumption.
-                This means that in the IKE_SESSION_RESUME exchange peers do not send the IKE_SA_INIT_AUTH notification
+                This means that in the IKE_SESSION_RESUME exchange peers do not send the IKE_SA_INIT_FULL_TRANSCRIPT_AUTH notification
                 and do not expect it in the received messages.
                 </t>
 
