@@ -332,7 +332,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </section>
 
         <section anchor="ack" title="Acknowledgements">
-            <t> TODO
+            <t> Thanks to those who contributed to mailing list discussions that shaped this document.
             </t>
         </section>
 
