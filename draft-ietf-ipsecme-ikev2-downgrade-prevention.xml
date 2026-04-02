@@ -222,7 +222,7 @@ response            <-- IKE_AUTH(IDr, AUTH, SA, TSi, TSr)
             force peers not to use some protocol extensions, in particular those that are initially proposed by the responder.
             </t>
 
-            <t> The second type of attack is an identity misbinding attack described in Downgrade Resilience in Key-Exchange Protocols <xref target="DOWNGRADE" />. The
+            <t> The second type of attack is an identity misbinding attack described in "Downgrade Resilience in Key-Exchange Protocols" (IEEE Security & Privacy 2016) <xref target="DOWNGRADE" />. The
             attacker's goal is once again to eavesdrop on the communication between two peers, but unlike the KCI attack, it does
             not need to compromise one of the peers. Instead, the attacker only needs to know the long-term authentication key of
             some party with whom one of the peers is configured to communicate.
