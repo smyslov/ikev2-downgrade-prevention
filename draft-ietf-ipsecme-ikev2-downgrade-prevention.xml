@@ -230,7 +230,7 @@ response            <-- IKE_AUTH(IDr, AUTH, SA, TSi, TSr)
 
             <t> In particular, suppose the attacker wants to eavesdrop on communication between initiator I and responder R and
             has access to the long-term authentication key of a different initiator A. The attack works exactly the same way as the previous
-            one, with one exception: after decrypting I's IKE_AUTH request it modifies it replacing I' identity IDi with A's identity IDa and authenticates the modified request
+            one, with one exception: after decrypting I's IKE_AUTH request it modifies it by replacing I's identity IDi with A's identity IDa and authenticates the modified request
             with A's long-term authentication key. At the end of the attack, initiator I will believe it has
             established a connection with responder R, but responder R will believe it has established a connection with initiator
 	        A (whose authentication key is known to the attacker). Nevertheless, the attacker will be able to read the encrypted
