@@ -39,6 +39,9 @@
             that prevents particular downgrade attacks on this protocol by having the peers confirm
             they have participated in the same conversation.
             </t>
+
+			<t> This document updates RFC 7296.
+			</t>
         </abstract>
     </front>
 
@@ -49,6 +52,10 @@
             on the SIGn-and-MAc (SIGMA) protocol <xref target="SIGMA" />. The protocol allows peers to mutually
             authenticate themselves and to derive session keys that are used to protect traffic.
             </t>
+
+			<t> This document modifies the way peers construct the data to be authenticated in IKEv2,
+			and thus updates RFC 7296.
+			</t>
 
             <t>(RFC EDITOR: Please remove this paragraph.) This document is being developed at
             <eref target="https://github.com/smyslov/ikev2-downgrade-prevention"/>.
