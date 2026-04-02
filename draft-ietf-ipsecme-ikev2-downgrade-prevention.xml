@@ -352,7 +352,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
                 <aside>
                     <t>During IKE SA resumption no cryptographic algorithms are negotiated and peers do not use their long-term credentials for authentication,
                     which is based on session keys from the old SA. For this reason, the attack defined in <xref target="attack" /> cannot be directly mounted.
-                    However, authentication of full transcript is good cryptographic practice and once implemented for the IKE_SA_INIT exchange,
+                    However, authentication of the full transcript is good cryptographic practice and once implemented for the IKE_SA_INIT exchange,
                     can easily be used for the IKE_SESSION_RESUME exchange too.
                     </t>
                 </aside>
