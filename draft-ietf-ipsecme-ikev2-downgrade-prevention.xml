@@ -139,7 +139,7 @@
 
                     <figure align="center">
                         <artwork align="left"><![CDATA[
-original request     --> IKE_SA_INIT(SA(strong, weak), KE, Ni)
+ original request     --> IKE_SA_INIT(SA(strong, weak), KE, Ni)
                      ]]></artwork>
                     </figure>
 
@@ -150,7 +150,7 @@ original request     --> IKE_SA_INIT(SA(strong, weak), KE, Ni)
 
                     <figure align="center">
                         <artwork align="left"><![CDATA[
-modified request     --> IKE_SA_INIT(SA(weak), KE, Ni)
+ modified request     --> IKE_SA_INIT(SA(weak), KE, Ni)
                      ]]></artwork>
                     </figure>
 
@@ -165,7 +165,7 @@ modified request     --> IKE_SA_INIT(SA(weak), KE, Ni)
 
                 <figure align="center">
                     <artwork align="left"><![CDATA[
-response     <-- IKE_SA_INIT(SA(weak), KE, Nr)
+ response     <-- IKE_SA_INIT(SA(weak), KE, Nr)
                  ]]></artwork>
                 </figure>
 
@@ -181,7 +181,7 @@ response     <-- IKE_SA_INIT(SA(weak), KE, Nr)
 
                 <figure align="center">
                     <artwork align="left"><![CDATA[
-original request    --> IKE_AUTH(IDi, AUTH, SA, TSi, TSr)
+ original request    --> IKE_AUTH(IDi, AUTH, SA, TSi, TSr)
                  ]]></artwork>
                 </figure>
 
@@ -193,7 +193,7 @@ original request    --> IKE_AUTH(IDi, AUTH, SA, TSi, TSr)
 
                 <figure align="center">
                     <artwork align="left"><![CDATA[
-modified request    --> IKE_AUTH(IDi, AUTH', SA, TSi, TSr)
+ modified request    --> IKE_AUTH(IDi, AUTH', SA, TSi, TSr)
                  ]]></artwork>
                 </figure>
 
@@ -204,7 +204,7 @@ modified request    --> IKE_AUTH(IDi, AUTH', SA, TSi, TSr)
 
                 <figure align="center">
                     <artwork align="left"><![CDATA[
-response            <-- IKE_AUTH(IDr, AUTH, SA, TSi, TSr)
+ response            <-- IKE_AUTH(IDr, AUTH, SA, TSi, TSr)
                  ]]></artwork>
                 </figure>
 
@@ -222,7 +222,7 @@ response            <-- IKE_AUTH(IDr, AUTH, SA, TSi, TSr)
             force peers not to use some protocol extensions, in particular those that are initially proposed by the responder.
             </t>
 
-            <t> The second type of attack is an identity misbinding attack described in "Downgrade Resilience in Key-Exchange Protocols" (IEEE Security & Privacy 2016) <xref target="DOWNGRADE" />. The
+            <t> The second type of attack is an identity misbinding attack described in &quot;Downgrade Resilience in Key-Exchange Protocols&quot; (IEEE Security &amp; Privacy 2016) <xref target="DOWNGRADE" />. The
             attacker's goal is once again to eavesdrop on the communication between two peers, but unlike the KCI attack, it does
             not need to compromise one of the peers. Instead, the attacker only needs to know the long-term authentication key of
             some party with whom one of the peers is configured to communicate.
@@ -353,7 +353,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
                     <t>During IKE SA resumption no cryptographic algorithms are negotiated and peers do not use their long-term credentials for authentication,
                     which is based on session keys from the old SA. For this reason, the attack defined in <xref target="attack" /> cannot be directly mounted.
                     However, authentication of the full transcript is good cryptographic practice and once implemented for the IKE_SA_INIT exchange,
-                    can easily be used for the IKE_SESSION_RESUME exchange too.
+                    can easily be used for the IKE_SESSION_RESUME exchange as well.
                     </t>
                 </aside>
 
