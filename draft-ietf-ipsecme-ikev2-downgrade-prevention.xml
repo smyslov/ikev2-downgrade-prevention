@@ -384,7 +384,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             </t>
 
             <aside>
-                <t> Note, that mixing pre-shared keys to exchange does not help if PPK key is one of the long term authentication information that has leaked.
+                <t> Note, that mixing pre-shared keys to exchange does not help if the PPK key is one of the long term authentication information that has leaked.
                 </t>
             </aside>
         </section>
