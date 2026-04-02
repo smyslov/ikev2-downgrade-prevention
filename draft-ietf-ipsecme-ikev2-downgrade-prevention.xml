@@ -44,9 +44,9 @@
 
     <middle>
         <section title="Introduction">
-            <t> The Internet Key Exchange version 2 protocol (IKEv2) defined in <xref target="RFC7296" /> provides
+            <t> The Internet Key Exchange version 2 protocol (IKEv2) <xref target="RFC7296" /> provides
             authenticated key exchange in the IP Security (IPsec) architecture. The cryptographic design of IKEv2 is based
-            on the SIGn-and-MAc (SIGMA) protocol defined in <xref target="SIGMA" />. The protocol allows peers to mutually
+            on the SIGn-and-MAc (SIGMA) protocol <xref target="SIGMA" />. The protocol allows peers to mutually
             authenticate themselves and to derive session keys that are used to protect traffic.
             </t>
 
@@ -68,15 +68,16 @@
         </section>
 
         <section anchor="ikeauth" title="Authentication in IKEv2">
-            <t> The details of how authentication is performed in IKEv2 are defined in Section 2.15 of <xref target="RFC7296" />.
-            Peers sign (or MAC) some blocks of data that consist of various parts of protocol data (see also <xref target="SIGMA" /> for the rationale). 
+            <t> The details of how authentication is performed in IKEv2 are defined in Section 2.15 of IKEv2 <xref target="RFC7296" />.
+            Peers sign (or MAC) some blocks of data that consist of various parts of protocol data (see also SIGMA <xref target="SIGMA" /> for the rationale). 
             The definition of these blocks of data is provided below for convenience.
+            </t>
+
+            <t>The initiator's signed octets can be described as:
             </t>
 
             <figure align="center">
                 <artwork align="left"><![CDATA[
-   The initiator's signed octets can be described as:
-
    InitiatorSignedOctets = RealMessage1 | NonceRData | MACedIDForI
    GenIKEHDR = [ four octets 0 if using port 4500 ] | RealIKEHDR
    RealIKEHDR =  SPIi | SPIr |  . . . | Length
@@ -85,9 +86,14 @@
    InitiatorIDPayload = PayloadHeader | RestOfInitIDPayload
    RestOfInitIDPayload = IDType | RESERVED | InitIDData
    MACedIDForI = prf(SK_pi, RestOfInitIDPayload)
+              ]]></artwork>
+           </figure>
 
-   The responder's signed octets can be described as:
+            <t>The responder's signed octets can be described as:
+            </t>
 
+          <figure align="center">
+              <artwork align="left"><![CDATA[
    ResponderSignedOctets = RealMessage2 | NonceIData | MACedIDForR
    GenIKEHDR = [ four octets 0 if using port 4500 ] | RealIKEHDR
    RealIKEHDR =  SPIi | SPIr |  . . . | Length
@@ -95,7 +101,8 @@
    NonceIPayload = PayloadHeader | NonceIData
    ResponderIDPayload = PayloadHeader | RestOfRespIDPayload
    RestOfRespIDPayload = IDType | RESERVED | RespIDData
-   MACedIDForR = prf(SK_pr, RestOfRespIDPayload)            ]]></artwork>
+   MACedIDForR = prf(SK_pr, RestOfRespIDPayload)
+               ]]></artwork>
             </figure>
 
             <t> In particular, the initiator, but not the responder, authenticates the IKE_SA_INIT request
@@ -128,32 +135,80 @@
 
             <ol>
                 <li><t> The initiator sends the IKE_SA_INIT request message with a list of proposed algorithms that includes
-                both "weak" and "strong" key exchange methods.</t></li>
+                both "weak" and "strong" key exchange methods.</t>
+
+                    <figure align="center">
+                        <artwork align="left"><![CDATA[
+ original request     --> IKE_SA_INIT(SA(strong, weak), KE, Ni)
+                     ]]></artwork>
+                    </figure>
+
+                </li>
 
                 <li><t> The attacker intercepts this message and re-injects a modified message without "strong" key exchange methods.
-                Note that this may require an additional step for the attack to succeed if the initiator includes
-                a public key for a "strong" key exchange method in the request. In this case the attacker intercepts
+                    </t>
+
+                    <figure align="center">
+                        <artwork align="left"><![CDATA[
+ modified request     --> IKE_SA_INIT(SA(weak), KE, Ni)
+                     ]]></artwork>
+                    </figure>
+
+                <t> Note that this may require an additional step for the attack to succeed if the initiator includes
+                a Key Exchange Data value for a "strong" key exchange method in the request. In this case the attacker intercepts
                 this message and responds with the INVALID_KE_PAYLOAD notification indicating that the initiator
-                must include a public key for a "weak" key exchange method. Then this message is intercepted
+                must include a Key Exchange Data value for a "weak" key exchange method. Then this message is intercepted
                 and re-injected without "strong" key exchange methods.</t></li>
 
                 <li><t> The responder receives this message and selects one of the "weak" key exchange methods (since the message
-                does not include any "strong" ones), then it sends back a response message, which the attacker allows to pass through without modifications.</t></li>
+                does not include any "strong" ones), then it sends back a response message, which the attacker allows to pass through without modifications.</t>
 
-                <li><t> Since the attacker has seen both public keys and can break the selected "weak" key exchange method in real time,
+                <figure align="center">
+                    <artwork align="left"><![CDATA[
+ response     <-- IKE_SA_INIT(SA(weak), KE, Nr)
+                 ]]></artwork>
+                </figure>
+
+                </li>
+
+                <li><t> Since the attacker has seen both Key Exchange Data values and can break the selected "weak" key exchange method in real time,
                 it calculates the SK_* session keys that allow the attacker to read and modify the content of the encrypted
                 IKE messages.</t></li>
 
                 <li><t> The initiator receives the IKE_SA_INIT response message, accepts the responder's selected algorithms,
                 including the "weak" key exchange method (since it is allowed by its policy), and starts the IKE_AUTH exchange. It computes the AUTH payload,
-                thus authenticating the IKE_SA_INIT request message it has sent.</t></li>
+                thus authenticating the IKE_SA_INIT request message it has sent.</t>
+
+                <figure align="center">
+                    <artwork align="left"><![CDATA[
+ original request    --> IKE_AUTH(IDi, AUTH, SA, TSi, TSr)
+                 ]]></artwork>
+                </figure>
+
+                </li>
 
                 <li><t> The attacker intercepts this message, decrypts it and modifies the AUTH payload so
                 that it allegedly authenticates the IKE_SA_INIT request message that was modified and injected by the attacker. The attacker
-                is able to do this because it knows the session keys and the initiator's long-term authentication key.</t></li>
+                is able to do this because it knows the session keys and the initiator's long-term authentication key.</t>
+
+                <figure align="center">
+                    <artwork align="left"><![CDATA[
+ modified request    --> IKE_AUTH(IDi, AUTH', SA, TSi, TSr)
+                 ]]></artwork>
+                </figure>
+
+                </li>
 
                 <li><t> The responder receives this message, verifies the AUTH payload and sends back the IKE_AUTH response message,
-                which the attacker allows to pass through.</t></li>
+                which the attacker allows to pass through.</t>
+
+                <figure align="center">
+                    <artwork align="left"><![CDATA[
+ response            <-- IKE_AUTH(IDr, AUTH, SA, TSi, TSr)
+                 ]]></artwork>
+                </figure>
+
+                </li>
 
                 <li><t> At this point the peers have established a connection using the "weak" key exchange method.
                 Note, that this is allowed by their security policies, but without the attacker's intervention they
@@ -167,7 +222,7 @@
             force peers not to use some protocol extensions, in particular those that are initially proposed by the responder.
             </t>
 
-            <t> The second type of attack is an identity misbinding attack described in <xref target="DOWNGRADE" />. The
+            <t> The second type of attack is an identity misbinding attack described in &quot;Downgrade Resilience in Key-Exchange Protocols&quot; (IEEE Security &amp; Privacy 2016) <xref target="DOWNGRADE" />. The
             attacker's goal is once again to eavesdrop on the communication between two peers, but unlike the KCI attack, it does
             not need to compromise one of the peers. Instead, the attacker only needs to know the long-term authentication key of
             some party with whom one of the peers is configured to communicate.
@@ -175,18 +230,18 @@
 
             <t> In particular, suppose the attacker wants to eavesdrop on communication between initiator I and responder R and
             has access to the long-term authentication key of a different initiator A. The attack works exactly the same way as the previous
-            one, with one exception: after decrypting and modifying I's AUTH payload, it authenticates the modified AUTH payload
-            with A's long-term authentication key instead of I's. At the end of the attack, initiator I will believe it has
+            one, with one exception: after decrypting I's IKE_AUTH request it modifies it by replacing I's identity IDi with A's identity IDa and authenticates the modified request
+            with A's long-term authentication key. At the end of the attack, initiator I will believe it has
             established a connection with responder R, but responder R will believe it has established a connection with initiator
-	    A (whose authentication key is known to the attacker). Nevertheless, the attacker will be able to read the encrypted
-	    messages sent between I and R.
+	        A (whose authentication key is known to the attacker). Nevertheless, the attacker will be able to read the encrypted
+	        messages sent between I and R.
             </t>
 
             <t> This attack used to be less relevant when cryptographic algorithms were considered secure or insecure because peers would disable 
             the insecure ones according to their security policy and not negotiate them. 
             On the other hand, the coexistence of old and new algorithms in the post-quantum (or any other) migration makes this attack more relevant. 
             With migration to quantum-resistant algorithms the KCI or identity misbinding attacks 
-            could be mounted on a hybrid PQ/T (<xref target="RFC9370" />) or pure post-quantum key exchange; where an attacker able to break 
+            could be mounted on a hybrid PQ/T <xref target="RFC9370" /> or pure post-quantum key exchange; where an attacker able to break 
             a traditional key exchange method (e.g. by means of a quantum computer) prevents peers from executing quantum-resistant key exchange method(s).
             </t>
         </section>
@@ -205,7 +260,7 @@
                 </t></li>
             </ul>
 
-            <t> If this extension is not supported by both peers, then the IKEv2 negotiation runs as defined in <xref target="RFC7296" />.
+            <t> If this extension is not supported by both peers, then the IKEv2 negotiation runs as defined in IKEv2 <xref target="RFC7296" />.
             </t>
 
             <t> The idea is that both the IKE_SA_INIT request and the IKE_SA_INIT response messages must be directly authenticated
@@ -244,7 +299,7 @@ N(IKE_SA_INIT_FULL_TRANSCRIPT_AUTH)  --->
             </figure>
 
             If a peer sent and received the IKE_SA_INIT_FULL_TRANSCRIPT_AUTH notification, then it uses the modified construction of the blocks of data
-            to be signed (or MAC'ed) compared to the definition from Section 2.15 of <xref target="RFC7296" />:
+            to be signed (or MAC'ed) compared to the definition from Section 2.15 of IKEv2 <xref target="RFC7296" />:
             </t>
 
             <figure align="center">
@@ -257,9 +312,9 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             ]]></artwork>
             </figure>
 
-            <t> where RealMessage1, RealMessage2, NonceIData, NonceRData, MACedIDForI and MACedIDForR are defined in Section 2.15 of <xref target="RFC7296" />,
+            <t> where RealMessage1, RealMessage2, NonceIData, NonceRData, MACedIDForI and MACedIDForR are defined in Section 2.15 of IKEv2 <xref target="RFC7296" />,
 				and ZeroPrefix is 8 octets of zero. ZeroPrefix serves a role of a domain separator making the new authentication blocks of data 
-				always different from authentication blocks of data defined in <xref target="RFC7296" />, because in both RealMessage1 and RealMessage2 the first 8 octets 
+				always different from authentication blocks of data defined in Section 2.15 of IKEv2 <xref target="RFC7296" />, because in both RealMessage1 and RealMessage2 the first 8 octets 
 				constitute IKE Initiator's SPI that can never be zero.
             </t>
 
@@ -267,11 +322,11 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 
         <section anchor="interaction" title="Interaction with other IKEv2 Extensions">
             <section anchor="ike_intermediate" title="Interaction with the IKE_INTERMEDIATE Exchange">
-                <t> The IKE_INTERMEDIATE exchange defined in <xref target="RFC9242" /> also modifies blocks of data to be signed (or MAC'ed).
-                This modification is described in Section 3.3.2 of <xref target="RFC9242" /> and can be
-                summarized as an addition of a new piece of data (IntAuth) to the end of the blocks of data from Section 2.15 of <xref target="RFC7296" />.
+                <t> The IKE_INTERMEDIATE exchange <xref target="RFC9242" /> also modifies blocks of data to be signed (or MAC'ed).
+                This modification is described in Section 3.3.2 of IKE_INTERMEDIAE exchange <xref target="RFC9242" /> and can be
+                summarized as an addition of a new piece of data (IntAuth) to the end of the blocks of data from Section 2.15 of IKEv2 <xref target="RFC7296" />.
                 If peers support extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blocks of data to be signed (or MAC'ed)
-                defined in <xref target="protocol" /> as replacements for blocks of data defined in Section 2.15 of <xref target="RFC7296" />,
+                defined in <xref target="protocol" /> as replacements for blocks of data defined in Section 2.15 of IKEv2 <xref target="RFC7296" />,
                 so that in case of IKE_INTERMEDIATE the IntAuth is added to these modified blocks.
                 </t>
 
@@ -283,7 +338,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             <section anchor="ike_resumption" title="Interaction with the IKE Session Resumption">
                 <t>IKE Session Resumption <xref target="RFC5723" /> allows peers to quickly restore IKE SA upon a failure.
                 To be able to do it a security gateway provides a client with session ticket that allows the gateway
-                to restore the IKE SA if this ticket is later presented by the client. <xref target="RFC5723" /> contains
+                to restore the IKE SA if this ticket is later presented by the client. IKE Session Resumption <xref target="RFC5723" /> contains
                 the list of IKE SA parameters marking each of parameter as either "restored from the ticket" or 
                 "re-negotiated at the time of resumption".
                 </t>
@@ -293,6 +348,14 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
                 This means that in the IKE_SESSION_RESUME exchange peers do not send the IKE_SA_INIT_FULL_TRANSCRIPT_AUTH notification
                 and do not expect it in the received messages.
                 </t>
+
+                <aside>
+                    <t>During IKE SA resumption no cryptographic algorithms are negotiated and peers do not use their long-term credentials for authentication,
+                    which is based on session keys from the old SA. For this reason, the attack defined in <xref target="attack" /> cannot be directly mounted.
+                    However, authentication of the full transcript is good cryptographic practice and once implemented for the IKE_SA_INIT exchange,
+                    can easily be used for the IKE_SESSION_RESUME exchange as well.
+                    </t>
+                </aside>
 
                 <t>If there is a chance that the state of this feature can be changed during SA inactivity
                 (e.g., a host is upgraded or its configuration was changed), it is <bcp14>RECOMMENDED</bcp14>
@@ -314,12 +377,16 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             <t> The attacks can also be mitigated by mixing a pre-shared key into the session key calculation.
             An attacker that does not know this pre-shared key will be unable to decrypt even if it manages to
             downgrade the key exchange.
-            However, the use of a pre-shared key is negotiated by an extension <xref target="RFC8784" />,
-            <xref target="RFC9867" />, and this negotiation is itself subject to downgrade
-            attack.
+            However, the use of a pre-shared key is negotiated by one of extensions Mixing Preshared Keys in IKEv2 <xref target="RFC8784" /> or
+            Mixing Preshared Keys in the IKE_INTERMEDIATE and CREATE_CHILD_SA Exchanges <xref target="RFC9867" />, and this negotiation is itself subject to downgrade attack.
             It is therefore necessary for each of the peers to mandate the use of a pre-shared key and abort the
             connection if negotiation fails.
             </t>
+
+            <aside>
+                <t> Note, that mixing pre-shared keys to exchange does not help if the PPK key is one of the long term authentication information that has leaked.
+                </t>
+            </aside>
         </section>
 
         <section anchor="iana" title="IANA Considerations">
@@ -331,11 +398,6 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             </figure>
         </section>
 
-        <section anchor="ack" title="Acknowledgements">
-            <t> Thanks to those who contributed to mailing list discussions that shaped this document.
-            </t>
-        </section>
-
     </middle>
 
     <back>
@@ -343,14 +405,14 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7296.xml" ?>
-            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9242.xml" ?>
-            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5723.xml" ?>
         </references>
 
         <references title='Informative References'>
-            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9370.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5723.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9242.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9370.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9867.xml" ?>
             <reference anchor="SIGMA">
               <front>
@@ -391,11 +453,14 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
               <seriesInfo name="Cryptology ePrint Archive" value="Paper 2016/072"/>
             </reference>
         </references>
+
+    <section anchor="ack" title="Acknowledgements" numbered="false">
+        <t> Thanks to those who contributed to mailing list discussions that shaped this document.
+        Tero Kivinen suggested adding protocol diagrams for readability, Shubham Kumar discussed
+        applicability of downgrade prevention to IKE session resumption.
+        </t>
+    </section>
+
     </back>
 </rfc>
-
-
-
-
-
 
