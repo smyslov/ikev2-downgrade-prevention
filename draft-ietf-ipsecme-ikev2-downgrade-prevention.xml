@@ -330,7 +330,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         <section anchor="interaction" title="Interaction with other IKEv2 Extensions">
             <section anchor="ike_intermediate" title="Interaction with the IKE_INTERMEDIATE Exchange">
                 <t> The IKE_INTERMEDIATE exchange <xref target="RFC9242" /> also modifies blocks of data to be signed (or MAC'ed).
-                This modification is described in Section 3.3.2 of IKE_INTERMEDIAE exchange <xref target="RFC9242" /> and can be
+                This modification is described in Section 3.3.2 of IKE_INTERMEDIATE exchange <xref target="RFC9242" /> and can be
                 summarized as an addition of a new piece of data (IntAuth) to the end of the blocks of data from Section 2.15 of IKEv2 <xref target="RFC7296" />.
                 If peers support extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blocks of data to be signed (or MAC'ed)
                 defined in <xref target="protocol" /> as replacements for blocks of data defined in Section 2.15 of IKEv2 <xref target="RFC7296" />,
