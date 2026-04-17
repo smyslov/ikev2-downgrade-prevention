@@ -244,9 +244,9 @@
 	        messages sent between I and R.
             </t>
 
-            <t> This attack used to be less relevant when cryptographic algorithms were considered secure or insecure because peers would disable 
+            <t> These attacks used to be less relevant when cryptographic algorithms were considered secure or insecure because peers would disable 
             the insecure ones according to their security policy and not negotiate them. 
-            On the other hand, the coexistence of old and new algorithms in the post-quantum (or any other) migration makes this attack more relevant. 
+            On the other hand, the coexistence of old and new algorithms in the post-quantum (or any other) migration makes these attacks more relevant. 
             With migration to quantum-resistant algorithms the KCI or identity misbinding attacks 
             could be mounted on a hybrid PQ/T <xref target="RFC9370" /> or pure post-quantum key exchange; where an attacker able to break 
             a traditional key exchange method (e.g. by means of a quantum computer) prevents peers from executing quantum-resistant key exchange method(s).
