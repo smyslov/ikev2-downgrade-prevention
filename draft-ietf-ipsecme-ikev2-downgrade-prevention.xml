@@ -394,6 +394,16 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
                 <t> Note, that mixing pre-shared keys to exchange does not help if the PPK key is one of the long term authentication information that has leaked.
                 </t>
             </aside>
+
+			<t> As any protocol that allows signing oracles (signing data received from the network that can be created by an adversary),
+			IKEv2 is theoretically succeptable to cross-protocol attacks, when the adversary uses the signed data in another protocol.
+			The downgrade prevention extension allows an adversary to put more data under the signature (e.g., by inserting a fake notification
+			into the message) comparing to the original IKEv2, which only signes a relatively small nonce received from the network.
+			</t>
+
+			<t> The solution is to avoid using the same key for different functionalities, especially not to use signing keys that are intended 
+			for ephemeral functionality (as in the case of IKEv2) also for other non-ephemeral applications (with different semantics). 
+			</t>
         </section>
 
         <section anchor="iana" title="IANA Considerations">
