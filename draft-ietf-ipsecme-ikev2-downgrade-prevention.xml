@@ -397,8 +397,9 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 
 			<t> As any protocol that allows signing oracles (signing data received from the network that can be created by an adversary),
 			IKEv2 is theoretically susceptible to cross-protocol attacks, whereby the adversary uses the signed data in another protocol.
-			The downgrade prevention extension allows an adversary to put more data under the signature (e.g., by inserting a fake notification
-			into the message) comparing to the original IKEv2, which only signes a relatively small nonce received from the network.
+			An active attacker controls the content of inbound messages and therefore the data signed by each peer during the authentication exchange.
+			In particular, the attacker can obtain a signature of a handshake transcript that includes a notification of its own choosing.
+			This potentially increases the attack surface compared to IKEv2 on its own, in which each party only signs the peer's nonce.
 			</t>
 
 			<t> The solution is to avoid using the same key for different functionalities, especially not to use signing keys that are intended 
