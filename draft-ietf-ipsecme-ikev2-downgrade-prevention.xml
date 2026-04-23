@@ -475,7 +475,8 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
     <section anchor="ack" title="Acknowledgements" numbered="false">
         <t> Thanks to those who contributed to mailing list discussions that shaped this document.
         Tero Kivinen suggested adding protocol diagrams for readability, Shubham Kumar discussed
-        applicability of downgrade prevention to IKE session resumption.
+        applicability of downgrade prevention to IKE session resumption. Thanks to Hugo Krawczyk who helped 
+		crafting the text related to cross-protocol attacks.
         </t>
     </section>
 
