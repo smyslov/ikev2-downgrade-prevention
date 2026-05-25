@@ -53,8 +53,8 @@
             authenticate themselves and to derive session keys that are used to protect traffic.
             </t>
 
-			<t> This document modifies the way peers construct the data to be authenticated in IKEv2,
-			and thus updates RFC 7296.
+			<t> This document modifies the way peers construct the data to be authenticated in IKEv2
+            to prevent particular downgrade attacks, and thus updates RFC 7296.
 			</t>
 
             <t>(RFC EDITOR: Please remove this paragraph.) This document is being developed at
@@ -138,7 +138,7 @@
 	    While the attack requires impersonating one of these peers to the other, impersonation is not its primary goal.
             </t>
 
-            <t> In case the attacker knows the initiator's long-term authentication key, the attack can be mounted as follows.</t>
+            <t> In the case where the attacker knows the initiator's long-term authentication key, the attack can be mounted as follows.</t>
 
             <ol>
                 <li><t> The initiator sends the IKE_SA_INIT request message with a list of proposed algorithms that includes
@@ -196,7 +196,8 @@
 
                 <li><t> The attacker intercepts this message, decrypts it and modifies the AUTH payload so
                 that it allegedly authenticates the IKE_SA_INIT request message that was modified and injected by the attacker. The attacker
-                is able to do this because it knows the session keys and the initiator's long-term authentication key.</t>
+                is able to do this because it knows the session keys and either knows the initiator's long-term authentication key
+                or can break its authentication algorithm.</t>
 
                 <figure align="center">
                     <artwork align="left"><![CDATA[
@@ -240,13 +241,13 @@
             one, with one exception: after decrypting I's IKE_AUTH request it modifies it by replacing I's identity IDi with A's identity IDa and authenticates the modified request
             with A's long-term authentication key. At the end of the attack, initiator I will believe it has
             established a connection with responder R, but responder R will believe it has established a connection with initiator
-	        A (whose authentication key is known to the attacker). Nevertheless, the attacker will be able to read the encrypted
+	        A (whose authentication key is known to the attacker). Nevertheless, the attacker will be able to passively read the encrypted
 	        messages sent between I and R.
             </t>
 
-            <t> These attacks used to be less relevant when cryptographic algorithms were considered secure or insecure because peers would disable 
-            the insecure ones according to their security policy and not negotiate them. 
-            On the other hand, the coexistence of old and new algorithms in the post-quantum (or any other) migration makes these attacks more relevant. 
+            <t> These attacks used to be less relevant when cryptographic algorithms were considered secure or insecure, 
+            which encouraged peers to disable the insecure ones according to their security policy and not negotiate them. 
+            The coexistence of old and new algorithms in the post-quantum (or any other) migration makes these attacks more relevant. 
             With migration to quantum-resistant algorithms the KCI or identity misbinding attacks 
             could be mounted on a hybrid PQ/T <xref target="RFC9370" /> or pure post-quantum key exchange; where an attacker able to break 
             a traditional key exchange method (e.g. by means of a quantum computer) prevents peers from executing quantum-resistant key exchange method(s).
@@ -272,7 +273,7 @@
 
             <t> The idea is that both the IKE_SA_INIT request and the IKE_SA_INIT response messages must be directly authenticated
             by both peers. Thus, if at least one non-compromised key is used in the IKE SA establishing, then any modification
-            of the IKE_SA_INIT messages will be detected. In particular, for the attacks described in <xref target="attack" />,
+            of the IKE_SA_INIT messages will be detected. For example, for the attacks described in <xref target="attack" />,
             it is necessary that the attacker forward the responder’s signed octets. Since the attacker is presumed to be incapable of forging 
             a valid signature on behalf of the responder, an attempt by the attacker to remove the responder’s commitment to this extension 
             would invalidate the signature in the AUTH payload. Consequently, while an attacker could strip support for this extension from the initiator, 
@@ -394,20 +395,21 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             </t>
 
             <aside>
-                <t> Note, that mixing pre-shared keys to exchange does not help if the PPK key is one of the long term authentication information that has leaked.
+                <t> Note, that mixing pre-shared keys to exchange does not help if the PPK key is one of the long-term credentials that has leaked.
                 </t>
             </aside>
 
-			<t> As any protocol that allows signing oracles (signing data received from the network that can be created by an adversary),
+            <t> It is necessary to avoid using the same key for different functionalities, especially not to use signing keys that are intended 
+            for ephemeral functionality (as in the case of IKEv2) also for other non-ephemeral applications (with different semantics). 
+            </t>
+
+			<t> This is important becaus as any protocol that allows signing oracles (signing data received from the network that can be created by an adversary),
 			IKEv2 is theoretically susceptible to cross-protocol attacks, whereby the adversary uses the signed data in another protocol.
 			An active attacker controls the content of inbound messages and therefore the data signed by each peer during the authentication exchange.
 			In particular, the attacker can obtain a signature of a handshake transcript that includes a notification of its own choosing.
 			This potentially increases the attack surface compared to IKEv2 on its own, in which each party only signs the peer's nonce.
 			</t>
 
-			<t> The solution is to avoid using the same key for different functionalities, especially not to use signing keys that are intended 
-			for ephemeral functionality (as in the case of IKEv2) also for other non-ephemeral applications (with different semantics). 
-			</t>
         </section>
 
         <section anchor="iana" title="IANA Considerations">
