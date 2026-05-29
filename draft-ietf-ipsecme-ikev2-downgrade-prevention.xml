@@ -224,7 +224,7 @@
                 of the connection so that it can read the peers' communication.</t></li>
             </ol>
 
-            <t> A variant of this attack can be mounted if the attacker has the responder’s long-term authentication key.
+            <t> A variant of this attack can be mounted if the attacker instead has the responder’s long-term authentication key.
             In this case the attacker cannot change the set of algorithms from which the responder makes its choice, but still may be able to
             force peers not to use some protocol extensions, in particular those that are initially proposed by the responder.
             </t>
@@ -279,7 +279,7 @@
             it could not do so from the responder.
             </t>
 
-            <t> Thus, there is no a separate downgrade-detection procedure. Instead, the additional initial-exchange
+            <t> Thus, there is no separate downgrade detection procedure. Instead, the additional initial-exchange
             data (the IKE_SA_INIT message received by a peer) is included in the input to the IKEv2 authentication calculation. 
             Since we assume that at least one of the long-term authentication keys is not compromised, then, in case of any modifications
             to the initial messages, the peer verifying authentication data created using the non-compromised key will detect authentication failure.
@@ -402,7 +402,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             </t>
 
             <aside>
-                <t> Note, that mixing pre-shared keys to exchange does not help if the PPK key is one of the long-term credentials that has leaked.
+                <t> Note, that mixing pre-shared keys into the exchange does not help if the PPK key is one of the long-term credentials that has leaked.
                 </t>
             </aside>
 
