@@ -406,12 +406,11 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
                 </t>
             </aside>
 
-            <t> It is necessary to avoid using the same key for different functionalities, especially not to use signing keys that are intended 
-            for ephemeral functionality (as in the case of IKEv2) also for other non-ephemeral applications (with different semantics). 
+            <t> It is necessary to avoid using the same key for different functionalities to thwart cross-protocol attacks. 
             </t>
 
 			<t> IKEv2, as any protocol that allows signing oracles (signing data received from the network that can be created by an adversary),
-is subject to cross-protocol attacks, whereby the adversary uses the signed data in another protocol.
+			is subject to cross-protocol attacks, whereby the adversary uses the signed data in another protocol.
 			An active attacker controls the content of inbound messages and therefore the data signed by each peer during the authentication exchange.
 			In particular, the attacker can obtain a signature of a handshake transcript that includes a notification of its own choosing.
 			This potentially increases the attack surface compared to IKEv2 on its own, in which each party only signs the peer's nonce.
