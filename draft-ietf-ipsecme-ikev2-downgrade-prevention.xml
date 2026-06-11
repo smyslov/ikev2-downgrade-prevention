@@ -53,7 +53,7 @@
             authenticate themselves and to derive session keys that are used to protect traffic.
             </t>
 
-			<t> This document updates <xref target="RFC7296" /> by modifying the way peers construct the data to be authenticated. Its goal is to prevent downgrade attacks on IKEv2.
+			<t> This document updates <xref target="RFC7296" /> by modifying the way peers construct the data to be authenticated (that is, the sequence of bytes signed by each while constructing its IKE_AUTH message). Its goal is to prevent downgrade attacks on IKEv2.
 			</t>
 
             <t>(RFC EDITOR: Please remove this paragraph.) This document is being developed at
