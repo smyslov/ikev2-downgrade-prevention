@@ -133,7 +133,7 @@
                 to break the authentication algorithm used by one of the peers in real time.</t></li>
             </ol>
 
-	    <t> Having these preconditions the goal of the attacker is to eavesdrop on communication between the peers.
+	    <t> Given these preconditions, the goal of the attacker is to eavesdrop on communication between the peers.
 	    While the attack requires impersonating one of these peers to the other, impersonation is not its primary goal.
             </t>
 
@@ -248,7 +248,7 @@
             which encouraged peers to disable the insecure ones according to their security policy and not negotiate them. 
             The coexistence of old and new algorithms in the post-quantum (or any other) migration makes these attacks more relevant. 
             With migration to quantum-resistant algorithms the KCI or identity misbinding attacks 
-            could be mounted on a hybrid PQ/T <xref target="RFC9370" /> or pure post-quantum key exchange; where an attacker able to break 
+            could be mounted on a hybrid Post-Quantum Traditional (PQ/T) <xref target="RFC9370" /> or pure post-quantum key exchange; where an attacker able to break 
             a traditional key exchange method (e.g. by means of a quantum computer) prevents peers from executing quantum-resistant key exchange method(s).
             </t>
         </section>
