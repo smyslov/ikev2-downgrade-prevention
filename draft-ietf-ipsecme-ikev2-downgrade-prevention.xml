@@ -383,26 +383,51 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </section>
 
         <section anchor="security" title="Security Considerations">
-	    <t> The IKEv2 extension defined in this document protects against downgrade attacks on IKEv2 described in <xref target="attack" />.
+            <t> The IKEv2 extension defined in this document protects against downgrade attacks on IKEv2 described in <xref target="attack" />.
             It only provides this protection when both peers implement the extension.
             </t>
 
-            <t> The attacks described in this document can also be mitigated by disabling support for weak key
+            <t> As pointed out in <xref target="solution" />, a critical condition for downgrade prevention to work is that at least 
+            one non-compromised authentication key is used in the protocol run.
+            This requires special considerations when both parties authenticate themselves using 
+            pre-shared keys (PSK). IKEv2 allows that each peer use its own PSK when computing the content
+            of the AUTH payload, so that each peer has two PSKs - one is used to create its AUTH payload
+            and the other is used to verify the received AUTH payload. If these PSKs are different and an attacker
+            knows only one of them, then the abovementioned condition is satisfied and the downgrade 
+            prevention mechanism works.
+            </t>
+
+            <t> However, if these PSKs are the same and this fact and the PSK value are known to the attacker,
+            then the attcker can forge both AUTH payloads and the downgrade pevention defined in this document is not possible. 
+            Note also that if an attacker is a legitimate member of the group (the second type of attack described in 
+            <xref target="attack" />), then in case of PSK authentication the attacker always knows 
+            both PSKs - its own and the responder's one. Thus, regardless whether they are equal or not,
+            the downgrade prevention defined in this document is not possible.
+            </t>
+
+            <t> In case of EAP authentication in IKEv2 the responder always signs its first IKE_AUTH mesaage with the digital signature.
+            If the attacker cannot forge this signature then regardless of the EAP method used for authentication
+            the downgrade prevention works. Otherwise, whether downgrade prevention is possible depends on the ability of the attacker 
+            to break the EAP method used for authentication. In particular, for non-key-generating EAP methods 
+            the downgrade prevention is not possible, as well as for key-generating EAP methods if the attacker can
+            learn the resulting key.
+            </t>
+
+            <t> The attacks described in this document can be mitigated by disabling support for weak key
             exchange methods. Doing so is feasible when the peer is known out-of-band to support strong key
             exchange methods, but this information may not be available in all deployment scenarios for IKEv2.
             </t>
 
-            <t> The attacks can also be mitigated by mixing a pre-shared key into the session key calculation.
+            <t> The attacks can also be mitigated by mixing a pre-shared key into the session key calculation
+            (note that this is different from the PSK authentication in IKEv2).
             An attacker that does not know this pre-shared key will be unable to decrypt even if it manages to
-            downgrade the key exchange.
-            However, the use of a pre-shared key is negotiated by one of extensions Mixing Preshared Keys in IKEv2 <xref target="RFC8784" /> or
-            Mixing Preshared Keys in the IKE_INTERMEDIATE and CREATE_CHILD_SA Exchanges <xref target="RFC9867" />, and this negotiation is itself subject to downgrade attack.
-            It is therefore necessary for each of the peers to mandate the use of a pre-shared key and abort the
-            connection if negotiation fails.
+            downgrade the key exchange. However, the use of a pre-shared key is negotiated by one of extensions &quot;Mixing Preshared Keys in IKEv2&quot; <xref target="RFC8784" /> or
+            &quot;Mixing Preshared Keys in the IKE_INTERMEDIATE and CREATE_CHILD_SA Exchanges&quot; <xref target="RFC9867" />, and this negotiation is itself subject to downgrade attack.
+            It is therefore necessary for each of the peers to mandate the use of a pre-shared key and abort the connection if negotiation fails.
             </t>
 
             <aside>
-                <t> Note, that mixing pre-shared keys into the exchange does not help if the PPK key is one of the long-term credentials that has leaked.
+                <t> Note, that mixing pre-shared keys into the exchange does not help if this key is one of the long-term credentials that has leaked.
                 </t>
             </aside>
 
