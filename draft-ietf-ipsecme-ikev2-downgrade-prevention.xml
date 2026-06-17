@@ -133,7 +133,7 @@
                 to break the authentication algorithm used by one of the peers in real time.</t></li>
             </ol>
 
-	    <t> Having these preconditions the goal of the attacker is to eavesdrop on communication between the peers.
+	    <t> Given these preconditions, the goal of the attacker is to eavesdrop on communication between the peers.
 	    While the attack requires impersonating one of these peers to the other, impersonation is not its primary goal.
             </t>
 
@@ -218,7 +218,7 @@
                 </li>
 
                 <li><t> At this point the peers have established a connection using the "weak" key exchange method.
-                Note, that this is allowed by their security policies, but without the attacker's intervention they
+                Note that this is allowed by their security policies, but without the attacker's intervention they
                 would have used a more secure "strong" key exchange method. The attacker essentially forced
                 the peers to use a "weak" method that it is able to break, thus downgrading the security properties
                 of the connection so that it can read the peers' communication.</t></li>
@@ -248,7 +248,7 @@
             which encouraged peers to disable the insecure ones according to their security policy and not negotiate them. 
             The coexistence of old and new algorithms in the post-quantum (or any other) migration makes these attacks more relevant. 
             With migration to quantum-resistant algorithms the KCI or identity misbinding attacks 
-            could be mounted on a hybrid PQ/T <xref target="RFC9370" /> or pure post-quantum key exchange; where an attacker able to break 
+            could be mounted on a hybrid Post-Quantum/Traditional (PQ/T) <xref target="RFC9370" /> or pure post-quantum key exchange; where an attacker able to break 
             a traditional key exchange method (e.g. by means of a quantum computer) prevents peers from executing quantum-resistant key exchange method(s).
             </t>
         </section>
@@ -343,7 +343,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
                 <t> The IKE_INTERMEDIATE exchange <xref target="RFC9242" /> also modifies blocks of data to be signed (or MAC'ed).
                 This modification is described in Section 3.3.2 of IKE_INTERMEDIATE exchange <xref target="RFC9242" /> and can be
                 summarized as an addition of a new piece of data (IntAuth) to the end of the blocks of data from Section 2.15 of IKEv2 <xref target="RFC7296" />.
-                If peers support extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blocks of data to be signed (or MAC'ed)
+                If peers support the extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blocks of data to be signed (or MAC'ed)
                 defined in <xref target="protocol" /> as replacements for blocks of data defined in Section 2.15 of IKEv2 <xref target="RFC7296" />,
                 so that in case of IKE_INTERMEDIATE the IntAuth is added to these modified blocks.
                 </t>
@@ -355,9 +355,9 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 
             <section anchor="ike_resumption" title="Interaction with the IKE Session Resumption">
                 <t>IKE Session Resumption <xref target="RFC5723" /> allows peers to quickly restore IKE SA upon a failure.
-                To be able to do it a security gateway provides a client with session ticket that allows the gateway
+                To be able to do it a security gateway provides a client with a session ticket that allows the gateway
                 to restore the IKE SA if this ticket is later presented by the client. IKE Session Resumption <xref target="RFC5723" /> contains
-                the list of IKE SA parameters marking each of parameter as either "restored from the ticket" or 
+                the list of IKE SA parameters marking each parameter as either "restored from the ticket" or 
                 "re-negotiated at the time of resumption".
                 </t>
 
@@ -377,7 +377,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 
                 <t>If there is a chance that the state of this feature can be changed during SA inactivity
                 (e.g., a host is upgraded or its configuration was changed), it is <bcp14>RECOMMENDED</bcp14>
-                that the host do not use IKE SA resumption and does a full handshake instead.
+                that the host does not use IKE SA resumption and does a full handshake instead.
                 </t>
             </section>
         </section>
@@ -451,7 +451,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </section>
 
         <section anchor="iana" title="IANA Considerations">
-            <t>This document defines new Notify Message Type in the "IKEv2 Notify Message Status Types" registry:</t>
+            <t>This document defines a new Notify Message Type in the "IKEv2 Notify Message Status Types" registry:</t>
             <figure align="center">
                 <artwork align="left"><![CDATA[
 16447       IKE_SA_INIT_FULL_TRANSCRIPT_AUTH
