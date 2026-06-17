@@ -421,8 +421,8 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             <t> The attacks can also be mitigated by mixing a pre-shared key into the session key calculation
             (note that this is different from the PSK authentication in IKEv2).
             An attacker that does not know this pre-shared key will be unable to decrypt even if it manages to
-            downgrade the key exchange. However, the use of a pre-shared key is negotiated by one of extensions &quot;Mixing Preshared Keys in IKEv2&quot; <xref target="RFC8784" /> or
-            &quot;Mixing Preshared Keys in the IKE_INTERMEDIATE and CREATE_CHILD_SA Exchanges&quot; <xref target="RFC9867" />, and this negotiation is itself subject to downgrade attack.
+            downgrade the key exchange. However, the use of a pre-shared key is negotiated as in "Mixing Preshared Keys in IKEv2" <xref target="RFC8784" /> or
+            "Mixing Preshared Keys in the IKE_INTERMEDIATE and CREATE_CHILD_SA Exchanges" <xref target="RFC9867" />, and this negotiation is itself subject to downgrade attack.
             It is therefore necessary for each of the peers to mandate the use of a pre-shared key and abort the connection if negotiation fails.
             </t>
 
