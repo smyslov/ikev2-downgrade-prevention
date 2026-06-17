@@ -414,7 +414,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             </t>
 
             <aside>
-                <t> Note that if the attacker has the long-lived credentials of both the initiator and responder, 
+                <t> Note that if the attacker has the long-lived credentials of both the initiator and responder, including PSKs,
                 then a direct person-in-the-middle attack where it replaces each party's key shares (including PQ ones) 
                 with its own is much easier to pull off than the downgrade attack.
                 </t>
