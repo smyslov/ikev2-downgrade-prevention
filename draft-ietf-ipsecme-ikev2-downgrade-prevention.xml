@@ -415,8 +415,9 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 
             <aside>
                 <t> Note that if the attacker has the long-lived credentials of both the initiator and responder, including PSKs,
-                then a direct person-in-the-middle attack where it replaces each party's key shares (including PQ ones) 
-                with its own is much easier to pull off than the downgrade attack.
+                then a direct person-in-the-middle attack where it replaces each party's key exchange messages with its own. 
+                This attack is much simpler to execute than the downgrade attacks described in this document, 
+                since the attacker doesn't have to break a weak key exchange directly.
                 </t>
             </aside>
 
