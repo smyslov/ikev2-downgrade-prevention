@@ -413,6 +413,13 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             learn the resulting key.
             </t>
 
+            <aside>
+                <t> Note that if the attacker has the long-lived credentials of both the initiator and responder, 
+                then a direct person-in-the-middle attack where it replaces each party's key shares (including PQ ones) 
+                with its own is much easier to pull off than the downgrade attack.
+                </t>
+            </aside>
+
             <t> The attacks described in this document can be mitigated by disabling support for weak key
             exchange methods. Doing so is feasible when the peer is known out-of-band to support strong key
             exchange methods, but this information may not be available in all deployment scenarios for IKEv2.
