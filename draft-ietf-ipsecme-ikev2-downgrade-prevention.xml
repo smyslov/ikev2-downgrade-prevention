@@ -397,15 +397,15 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             prevention mechanism works.
             </t>
 
-            <t> However, if these PSKs are the same and this fact and the PSK value are known to the attacker,
-            then the attcker can forge both AUTH payloads and the downgrade pevention defined in this document is not possible. 
+            <t> However, if these PSKs are the same and this fact as well as the PSK value are known to the attacker,
+            then the attacker can forge both AUTH payloads and the downgrade prevention defined in this document is not possible. 
             Note also that if an attacker is a legitimate member of the group (the second type of attack described in 
             <xref target="attack" />), then in case of PSK authentication the attacker always knows 
             both PSKs - its own and the responder's one. Thus, regardless whether they are equal or not,
             the downgrade prevention defined in this document is not possible.
             </t>
 
-            <t> In case of EAP authentication in IKEv2 the responder always signs its first IKE_AUTH mesaage with the digital signature.
+            <t> In case of EAP authentication in IKEv2 the responder always signs its first IKE_AUTH message with the digital signature.
             If the attacker cannot forge this signature then regardless of the EAP method used for authentication
             the downgrade prevention works. Otherwise, whether downgrade prevention is possible depends on the ability of the attacker 
             to break the EAP method used for authentication. In particular, for non-key-generating EAP methods 
@@ -435,7 +435,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             </t>
 
             <aside>
-                <t> Note, that mixing pre-shared keys into the exchange does not help if this key is one of the long-term credentials that has leaked.
+                <t> Note that mixing pre-shared keys into the exchange does not help if this key is one of the long-term credentials that has leaked.
                 </t>
             </aside>
 
