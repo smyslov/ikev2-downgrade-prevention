@@ -393,8 +393,10 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             pre-shared keys (PSK). IKEv2 allows that each peer use its own PSK when computing the content
             of the AUTH payload, so that each peer has two PSKs - one is used to create its AUTH payload
             and the other is used to verify the received AUTH payload. If these PSKs are different and an attacker
-            knows only one of them, then the abovementioned condition is satisfied and the downgrade 
-            prevention mechanism works.
+            knows only one of them, then the abovementioned condition is satisfied and the downgrade
+            prevention mechanism works. This assumes that the distinct PSKs are selected and verified as
+            peer- and direction-specific authentication credentials; merely configuring different PSK values
+            without binding them to the corresponding peer identities is not sufficient for this condition.
             </t>
 
             <t> However, if these PSKs are the same and this fact as well as the PSK value are known to the attacker,
