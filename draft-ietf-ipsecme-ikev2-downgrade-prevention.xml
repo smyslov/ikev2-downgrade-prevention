@@ -35,9 +35,11 @@
         </author>
         <date/>
         <abstract>
-            <t> This document describes an extension to the Internet Key Exchange protocol version 2 (IKEv2)
-            that prevents particular downgrade attacks on this protocol by having the peers confirm
-            they have participated in the same conversation.
+            <t> This document describes an extension to the Internet Key Exchange
+            protocol version 2 (IKEv2) in which the peers authenticate the full
+            IKE_SA_INIT transcript. When both peers implement
+            the extension and at least one relevant authentication credential is
+            not compromised, this prevents certain downgrade attacks on IKEv2.
             </t>
 
 			<t> This document updates RFC 7296.
@@ -115,6 +117,16 @@
             (RealMessage1) and the responder, but not the initiator, authenticates the IKE_SA_INIT response (RealMessage2).
             Thus, each side authenticates only the initial message it has sent and not the initial message it has received.
             </t>
+
+            <aside>
+                <t> For the authentication calculations defined above, RealMessage1 and
+                RealMessage2 are the final accepted IKE_SA_INIT request and response. If one or more
+                prior IKE_SA_INIT exchanges were rejected and then restarted, for example due to COOKIE
+                or INVALID_KE_PAYLOAD, those messages of the rejected exchanges are not included in the
+                authenticated transcript.
+                </t>
+            </aside>
+
         </section>
 
         <section anchor="attack" title="Downgrade Attacks Description">
@@ -304,6 +316,7 @@
 
             <t> If the responder supports this extension then it also includes this notification in the response message
             regardless of whether it was received in the request or not.
+            </t>
 
             <figure align="center">
                 <artwork align="left"><![CDATA[
@@ -316,7 +329,16 @@ N(IKE_SA_INIT_FULL_TRANSCRIPT_AUTH)  --->
             ]]></artwork>
             </figure>
 
-            If a peer sent and received the IKE_SA_INIT_FULL_TRANSCRIPT_AUTH notification, then it uses the modified construction of the blocks of data
+            <aside>
+                <t> If an attacker removes this notification from either direction when
+                both peers implement the extension, the peers will compute different
+                authentication inputs and the exchange will fail during IKE_AUTH.
+                Thus, attempts to suppress the extension do not silently disable its
+                protection when both peers implement it.
+                </t>
+            </aside>
+
+            <t> If a peer sent and received the IKE_SA_INIT_FULL_TRANSCRIPT_AUTH notification, then it uses the modified construction of the blocks of data
             to be signed (or MAC'ed) compared to the definition from Section 2.15 of IKEv2 <xref target="RFC7296" />:
             </t>
 
@@ -335,7 +357,6 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 				always different from authentication blocks of data defined in Section 2.15 of IKEv2 <xref target="RFC7296" />, because in both RealMessage1 and RealMessage2 the first 8 octets 
 				constitute IKE Initiator's SPI that can never be zero.
             </t>
-
         </section>
 
         <section anchor="interaction" title="Interaction with other IKEv2 Extensions">
@@ -380,6 +401,13 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
                 that the host does not use IKE SA resumption and does a full handshake instead.
                 </t>
             </section>
+        </section>
+
+        <section anchor="operational" title="Operational Considerations">
+            <t> Deployments that rely on this mechanism for downgrade resistance
+            should provide a local policy to require successful negotiation of
+            this extension and to abort the connection otherwise.
+            </t>
         </section>
 
         <section anchor="security" title="Security Considerations">
@@ -521,7 +549,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
     <section anchor="ack" title="Acknowledgements" numbered="false">
         <t> Thanks to those who contributed to mailing list discussions that shaped this document.
         Tero Kivinen suggested adding protocol diagrams for readability, Shubham Kumar discussed
-        applicability of downgrade prevention to IKE session resumption, Songbo Bu helped with crafting
+        applicability of downgrade prevention to IKE session resumption, Songbo Bu and Derrell Piper helped with crafting
         the clear text. Special thanks to Yaroslav Rosomakho for pointing out to nuances concerned with PSK authentication in IKEv2.
         </t>
     </section>
