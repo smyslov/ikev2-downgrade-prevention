@@ -49,10 +49,10 @@
 
     <middle>
         <section title="Introduction">
-            <t> The Internet Key Exchange version 2 protocol (IKEv2) <xref target="RFC7296" /> provides
+            <t> The Internet Key Exchange Protocol Version 2 (IKEv2) <xref target="RFC7296" /> provides
             authenticated key exchange in the IP Security (IPsec) architecture. The cryptographic design of IKEv2 is based
             on the SIGn-and-MAc (SIGMA) protocol <xref target="SIGMA" />. The protocol allows peers to mutually
-            authenticate themselves and to derive session keys that are used to protect traffic.
+            authenticate themselves and to derive session keys that are used to protect traffic exchanged between them.
             </t>
 
 			<t> This document updates <xref target="RFC7296" /> by modifying the way peers construct the data to be authenticated (that is, the sequence of bytes signed by each while constructing its IKE_AUTH message). Its goal is to prevent downgrade attacks on IKEv2.
@@ -71,13 +71,13 @@
             they appear in all capitals, as shown here.
             </t>
 
-            <t> It is assumed that readers are familiar with the IKEv2 protocol <xref target="RFC7296" />.
+            <t> It is assumed that readers are familiar with the IKEv2 protocol and notations defined in <xref target="RFC7296" />.
             </t>
         </section>
 
         <section anchor="ikeauth" title="Authentication in IKEv2">
-            <t> The details of how authentication is performed in IKEv2 are defined in Section 2.15 of IKEv2 <xref target="RFC7296" />.
-            Peers sign (or MAC) some blocks of data that consist of various parts of protocol data (see also SIGMA <xref target="SIGMA" /> for the rationale). 
+            <t> The details of how authentication is performed in IKEv2 are defined in Section 2.15 of <xref target="RFC7296" />.
+            Peers sign (or MAC) some blocks of data that consist of various parts of protocol data (see also <xref target="SIGMA" /> for the rationale). 
             The definition of these blocks of data is provided below for convenience.
             </t>
 
@@ -149,7 +149,7 @@
 	    While the attack requires impersonating one of these peers to the other, impersonation is not its primary goal.
             </t>
 
-            <t> In the case where the attacker knows the initiator's long-term authentication key, the attack can be mounted as follows.</t>
+            <t> In the case where the attacker knows the initiator's long-term authentication key, the attack can be mounted as follows:</t>
 
             <ol>
                 <li><t> The initiator sends the IKE_SA_INIT request message with a list of proposed algorithms that includes
@@ -300,13 +300,13 @@
             </t>
 
             <t> In essence, the peers use this extension to confirm they have had the same
-            conversation, a property enjoyed by many modern authenticated key exchange protocols that may have other benefits beyond
+            conversation, a property offered by many authenticated key exchange protocols that may have other benefits beyond
             downgrade protection, like TLS 1.3 <xref target="RFC8446" />.
             </t>
         </section>
 
         <section anchor="protocol" title="Protocol Details">
-            <t> The initiator supporting this extension includes a new status type notification IKE_SA_INIT_FULL_TRANSCRIPT_AUTH
+            <t> An initiator supporting this extension includes a new status type notification IKE_SA_INIT_FULL_TRANSCRIPT_AUTH
             in the IKE_SA_INIT request message. The Notify Message Type for this notification
             is 16447, Protocol ID and SPI Size are both set to 0 and the notification data is empty.
 			Future specifications may make use of the notification data of this notification.
@@ -314,7 +314,7 @@
 			of the notification data in the received IKE_SA_INIT_FULL_TRANSCRIPT_AUTH notification if it is not empty.
             </t>
 
-            <t> If the responder supports this extension then it also includes this notification in the response message
+            <t> If the responder supports this extension, then it also includes this notification in the response message
             regardless of whether it was received in the request or not.
             </t>
 
@@ -352,7 +352,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             ]]></artwork>
             </figure>
 
-            <t> where RealMessage1, RealMessage2, NonceIData, NonceRData, MACedIDForI and MACedIDForR are defined in Section 2.15 of IKEv2 <xref target="RFC7296" />,
+            <t> where RealMessage1, RealMessage2, NonceIData, NonceRData, MACedIDForI, and MACedIDForR are defined in Section 2.15 of IKEv2 <xref target="RFC7296" />,
 				and ZeroPrefix is 8 octets of zero. ZeroPrefix serves a role of a domain separator making the new authentication blocks of data 
 				always different from authentication blocks of data defined in Section 2.15 of IKEv2 <xref target="RFC7296" />, because in both RealMessage1 and RealMessage2 the first 8 octets 
 				constitute IKE Initiator's SPI that can never be zero.
@@ -361,8 +361,8 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 
         <section anchor="interaction" title="Interaction with other IKEv2 Extensions">
             <section anchor="ike_intermediate" title="Interaction with the IKE_INTERMEDIATE Exchange">
-                <t> The IKE_INTERMEDIATE exchange <xref target="RFC9242" /> also modifies blocks of data to be signed (or MAC'ed).
-                This modification is described in Section 3.3.2 of IKE_INTERMEDIATE exchange <xref target="RFC9242" /> and can be
+                <t> The Intermediate Exchange in the Internet Key Exchange Protocol Version 2 (IKEv2) <xref target="RFC9242" /> also modifies blocks of data to be signed (or MAC'ed).
+                This modification is described in Section 3.3.2 of <xref target="RFC9242" /> and can be
                 summarized as an addition of a new piece of data (IntAuth) to the end of the blocks of data from Section 2.15 of IKEv2 <xref target="RFC7296" />.
                 If peers support the extension defined in this document, then they <bcp14>MUST</bcp14> treat modified blocks of data to be signed (or MAC'ed)
                 defined in <xref target="protocol" /> as replacements for blocks of data defined in Section 2.15 of IKEv2 <xref target="RFC7296" />,
@@ -482,7 +482,8 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
         </section>
 
         <section anchor="iana" title="IANA Considerations">
-            <t>This document defines a new Notify Message Type in the "IKEv2 Notify Message Status Types" registry:</t>
+            <t>This document defines a new Notify Message Type in the "IKEv2 Notify Message Status Types" registry under
+			the "Internet Key Exchange Version 2 (IKEv2) Parameters" registry group:</t>
             <figure align="center">
                 <artwork align="left"><![CDATA[
 16447       IKE_SA_INIT_FULL_TRANSCRIPT_AUTH
