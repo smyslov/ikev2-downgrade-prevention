@@ -447,9 +447,10 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
             the downgrade prevention defined in this document is not possible.
             </t>
 
-            <t> In case of EAP authentication in IKEv2 the responder always signs its first IKE_AUTH message with the digital signature.
+            <t> In case of EAP authentication in IKEv2, as per <xref target="RFC7296" />, the responder always signs its first IKE_AUTH message with the digital signature.
             If the attacker cannot forge this signature then regardless of the EAP method used for authentication
-            the downgrade prevention works. Otherwise, whether downgrade prevention is possible depends on the ability of the attacker 
+            the downgrade prevention works. Otherwise (and also in case EAP-only authentication <xref target="RFC5998" />), 
+            whether downgrade prevention is possible depends on the ability of the attacker 
             to break the EAP method used for authentication. In particular, for non-key-generating EAP methods 
             the downgrade prevention is not possible, as well as for key-generating EAP methods if the attacker can
             learn the resulting key.
@@ -514,6 +515,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
 
         <references title='Informative References'>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5723.xml" ?>
+            <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5998.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8784.xml" ?>
             <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.9242.xml" ?>
