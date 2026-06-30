@@ -564,7 +564,7 @@ ResponderSignedOctets = ZeroPrefix | RealMessage1
     <section anchor="ack" title="Acknowledgements" numbered="false">
         <t> Thanks to those who contributed to mailing list discussions that shaped this document.
         Tero Kivinen suggested adding protocol diagrams for readability, Shubham Kumar discussed
-        applicability of downgrade prevention to IKE session resumption, Songbo Bu and Derrell Piper helped with crafting
+        applicability of downgrade prevention to IKE session resumption, Songbo Bu, Derrell Piper, and Tobias Brunner helped with crafting
         the clear text. Special thanks to Yaroslav Rosomakho for pointing out to nuances concerned with PSK authentication in IKEv2.
         </t>
     </section>
