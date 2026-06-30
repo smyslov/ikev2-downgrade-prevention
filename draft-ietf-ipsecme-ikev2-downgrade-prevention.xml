@@ -35,7 +35,7 @@
         </author>
         <date/>
         <abstract>
-            <t> This document describes an extension to the Internet Key Exchange
+            <t> This document specifies an extension to the Internet Key Exchange
             protocol version 2 (IKEv2) in which the peers authenticate the full
             IKE_SA_INIT transcript. When both peers implement
             the extension and at least one relevant authentication credential is
@@ -293,7 +293,7 @@
 
             <t> Thus, there is no separate downgrade detection procedure. Instead, the additional initial-exchange
             data (the IKE_SA_INIT message received by a peer) is included in the input to the IKEv2 authentication calculation. 
-            Since we assume that at least one of the long-term authentication keys is not compromised, then, in case of any modifications
+            Since the pre-condition is that at least one of the long-term authentication keys is not compromised, then, in case of any modifications
             to the initial messages, the peer verifying authentication data created using the non-compromised key will detect authentication failure.
             The peer is not expected to distinguish this failure from other authentication failures, 
             such as the use of an incorrect credential or a local configuration mismatch.
